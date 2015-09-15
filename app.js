@@ -4,13 +4,22 @@
     events: {
       'app.activated':'doSomething',
       'click #stringButton': 'doSearch',
-      'searchMacros.done': 'handleResults'
+      'searchMacros.done': 'handleResults',
+      'getNextPage.done': 'handleResults'
     },
 
     requests: {
-      searchMacros: function(data) {
+      searchMacros: function() {
         return {
           url: '/api/v2/macros.json',
+          type: 'GET',
+          dataType: 'json'
+        };
+      },
+
+      getNextPage: function(url) {
+        return {
+          url: url,
           type: 'GET',
           dataType: 'json'
         };
@@ -22,12 +31,15 @@
     },
 
     doSearch: function() {
+      this.$('.results').empty();
+      this.$('#stringButton').prop('disabled', true);
+      this.$('#stringButton').prop('value', 'Searching...');
       this.ajax('searchMacros');
       return false;
     },
 
     handleResults: function (data) {
-      console.log(data.macros);
+      console.log(data);
       var macros = data.macros;
       var results = [];
       var query = this.$("#search").val();
@@ -41,7 +53,14 @@
       var resultsTemplate = this.renderTemplate('results', {results: results} );
 
       // Insert rendered template into the results div
-      this.$('.results').html(resultsTemplate);
+      this.$('.results').append(resultsTemplate);
+
+      if (data.next_page){
+        this.ajax('getNextPage', data.next_page);
+      } else {
+        this.$('#stringButton').prop('disabled', false);
+        this.$('#stringButton').prop('value', 'Search Macros');
+      }
     },
 
     getMacroActions: function(macro) {
