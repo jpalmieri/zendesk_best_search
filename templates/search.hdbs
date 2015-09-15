@@ -2,8 +2,13 @@
   <table>
   <tr>
     <td>Search tags:</td>
-    <td><input id='search' /></td>
-    <td><input type="submit" value="Search Macros" class="tagButton" />
+    <td><input class='query tagQuery' /></td>
+    <td><input type="submit" value="Search" class="tagButton searchButton" />
+  </tr>
+  <tr>
+    <td>Search comments:</td>
+    <td><input class='query commentQuery' /></td>
+    <td><input type="submit" value="Search" class="commentButton searchButton" />
   </tr>
   </table>
 </form>
