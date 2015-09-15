@@ -1,0 +1,10 @@
+<form action="" method="POST">
+  <table>
+  <tr>
+    <td>Search tags:</td>
+    <td><input id='search' /></td>
+    <td><input type="submit" value="Search Macros" id="stringButton" />
+  </tr>
+  </table>
+</form>
+<div class="results"/>
