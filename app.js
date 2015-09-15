@@ -71,19 +71,17 @@
       return actions;
     },
 
-    getCurrentTags: function(actions) {
-      var tags = [];
+    getValues: function(macro) {
+      var actions = this.getMacroActions(macro);
+      var values = [];
       actions.forEach( function(action) {
-        if (action.field == "current_tags") {
-          tags.push(action.value);
-        }
+        values.push(action.value);
       });
-      return tags;
+      return values;
     },
 
     getTagMatches: function(macro, query) {
-      var actions = this.getMacroActions(macro);
-      var tags = this.getCurrentTags(actions);
+      var tags = this.getValues(macro);
       if ( tags.indexOf(query) > -1 ) {
         return macro;
       } else {
