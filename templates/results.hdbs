@@ -1,9 +1,5 @@
-{{#if results}}
-  {{#each results}}
-    {{#if this}}
-      <li><a href="/rules/{{this.id}}/edit" target="_blank">{{this.title}}</a></li>
-    {{/if}}
-  {{/each}}
-{{else}}
-No results!!
-{{/if}}
+{{#each results}}
+  {{#if this}}
+    <li><a href="/rules/{{this.id}}/edit" target="_blank">{{this.title}}</a></li>
+  {{/if}}
+{{/each}}

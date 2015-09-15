@@ -3,7 +3,7 @@
   <tr>
     <td>Search tags:</td>
     <td><input id='search' /></td>
-    <td><input type="submit" value="Search Macros" id="stringButton" />
+    <td><input type="submit" value="Search Macros" class="tagButton" />
   </tr>
   </table>
 </form>
