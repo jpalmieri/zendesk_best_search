@@ -61,6 +61,7 @@
         this.$('#stringButton').prop('disabled', false);
         this.$('#stringButton').prop('value', 'Search Macros');
       }
+      this.$('.count').text("Displaying " + this.$('.results ul li').length + " matches");
     },
 
     getMacroActions: function(macro) {
@@ -84,8 +85,6 @@
       var tags = this.getValues(macro);
       if ( tags.indexOf(query) > -1 ) {
         return macro;
-      } else {
-        return '';
       }
     }
   };

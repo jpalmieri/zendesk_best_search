@@ -8,6 +8,7 @@
   </table>
 </form>
 <div class="results">
+  <span class='count'></span>
  <ul>
  </ul>
 </div>
