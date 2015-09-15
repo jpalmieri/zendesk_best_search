@@ -31,7 +31,7 @@
     },
 
     doSearch: function() {
-      this.$('.results').empty();
+      this.$('.results ul').empty();
       this.$('#stringButton').prop('disabled', true);
       this.$('#stringButton').prop('value', 'Searching...');
       this.ajax('searchMacros');
@@ -53,7 +53,7 @@
       var resultsTemplate = this.renderTemplate('results', {results: results} );
 
       // Insert rendered template into the results div
-      this.$('.results').append(resultsTemplate);
+      this.$('.results ul').append(resultsTemplate);
 
       if (data.next_page){
         this.ajax('getNextPage', data.next_page);
