@@ -32,6 +32,7 @@
         services.notify("Please check at least one condition's checkbox.", 'alert');
       } else {
         this.stopped = false;
+        this.$('.spinner').show();
         this.$('.stop.btn').show();
         this.$('.count').text('');
         this.$('.results ul').empty();
@@ -53,6 +54,7 @@
       this.$('.search.btn').prop('value', 'Search');
       this.$('.stop.btn').hide();
       this.stopped = true;
+      this.$('.spinner').hide();
     },
 
     filterResults: function(data) {
@@ -147,10 +149,10 @@
       var resultsTemplate = this.renderTemplate('results', {results: results} );
 
       // Insert rendered template into the results div
-      this.$('.results ul').append(resultsTemplate);
+      this.$('.results tbody').append(resultsTemplate);
 
       // Display result count
-      this.$('.count').text("Displaying " + this.$('.results ul li').length + " matches");
+      this.$('.count').html("<h3>Displaying " + this.$('.results tbody tr').length + " matches</h3>");
 
     },
 

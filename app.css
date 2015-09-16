@@ -1,16 +1,11 @@
-input {
-  background-color: #FFFFFF;
-  border: 1px solid #B1B1B1;
+form {
+  width: 550px;
 }
 
-input.btn {
-  width: 100px;
+.table td {
+  border: 0;
 }
 
-td {
-  padding: 5px 10px;
-}
-
-input.stop.btn {
+input.stop.btn, .spinner {
   display: none;
 }
