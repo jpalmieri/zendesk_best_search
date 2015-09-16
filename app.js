@@ -7,7 +7,13 @@
       'app.activated':                      'initialize',
       'click .search.btn':                  'startSearch',
       'requestMacros.done':                 'filterResults',
-      'click .stop.btn':                    'stopSearch'
+      'click .stop.btn':                    'stopSearch',
+      'app.created': function() {
+        // Datepicker needs time for elements to load apparently...
+        setTimeout( function(){
+          this.$('.query.date').datepicker({ dateFormat: "yy-mm-dd" });
+        }, 150);
+      }
     },
 
     requests: {
@@ -63,6 +69,9 @@
       if ( this.$('.check.comment').is(':checked') ) {
         results = this.filterCommentResults(results);
       }
+      if ( this.$('.check.updated').is(':checked') ) {
+        results = this.filterByUpdatedDate(results);
+      }
 
       this.displayResults(results);
 
@@ -100,6 +109,21 @@
           }
         });
       }.bind(this) );
+
+      return results;
+    },
+
+    filterByUpdatedDate: function(macros) {
+      var results = [];
+      var startDate = new Date( this.$('.query.updated.start-date').val() );
+      var endDate = new Date( this.$('.query.updated.end-date').val() );
+
+      macros.forEach( function(macro) {
+        var updatedDate = new Date(macro.updated_at);
+        if ( updatedDate > startDate && updatedDate < endDate) {
+          results.push(macro);
+        }
+      });
 
       return results;
     },
