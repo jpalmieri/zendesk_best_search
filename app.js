@@ -85,7 +85,7 @@
 
     filterTagResults: function(macros) {
       var results = [];
-      var query = this.$('.query.tag').val();
+      var query = this.$('.query.tag').val().toLowerCase();
 
       macros.forEach( function(macro) {
         var tags = this.getValues(macro);
@@ -99,7 +99,7 @@
 
     filterCommentResults: function(macros) {
       var results = [];
-      var query = this.$('.query.comment').val();
+      var query = this.$('.query.comment').val().toLowerCase();
 
       macros.forEach( function(macro) {
         var comments = this.getComments(macro);
@@ -164,7 +164,7 @@
       var comments = [];
       actions.forEach( function(action) {
         if (action.value && action.field == "comment_value") {
-          comments.push( action.value[1] );
+          comments.push( action.value[1].toLowerCase() );
         }
       });
       return comments;
