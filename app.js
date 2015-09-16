@@ -4,16 +4,10 @@
 
   return {
     events: {
-      'app.activated':                      'initialize',
+      'pane.activated':                     'initialize',
       'click .search.btn':                  'startSearch',
       'requestMacros.done':                 'filterResults',
-      'click .stop.btn':                    'stopSearch',
-      'app.created': function() {
-        // Datepicker needs time for elements to load apparently...
-        setTimeout( function(){
-          this.$('.query.date').datepicker({ dateFormat: "yy-mm-dd" });
-        }, 150);
-      }
+      'click .stop.btn':                    'stopSearch'
     },
 
     requests: {
@@ -29,6 +23,8 @@
     initialize: function() {
       this.switchTo('search');
       this.stopped = true;
+      this.$('.query.date').datepicker({ dateFormat: "yy-mm-dd" });
+      console.log('datepicker');
     },
 
     startSearch: function() {
