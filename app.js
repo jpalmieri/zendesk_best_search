@@ -65,6 +65,9 @@
       if ( this.$('.check.comment').is(':checked') ) {
         results = this.filterCommentResults(results);
       }
+      if ( this.$('.check.created').is(':checked') ) {
+        results = this.filterByCreatedDate(results);
+      }
       if ( this.$('.check.updated').is(':checked') ) {
         results = this.filterByUpdatedDate(results);
       }
@@ -117,6 +120,21 @@
       macros.forEach( function(macro) {
         var updatedDate = new Date(macro.updated_at);
         if ( updatedDate > startDate && updatedDate < endDate) {
+          results.push(macro);
+        }
+      });
+
+      return results;
+    },
+
+    filterByCreatedDate: function(macros) {
+      var results = [];
+      var startDate = new Date( this.$('.query.created.start-date').val() );
+      var endDate = new Date( this.$('.query.created.end-date').val() );
+
+      macros.forEach( function(macro) {
+        var createdDate = new Date(macro.created_at);
+        if ( createdDate > startDate && createdDate < endDate) {
           results.push(macro);
         }
       });

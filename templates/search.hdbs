@@ -14,6 +14,13 @@
     <td>in comments</td>
   </tr>
   <tr>
+    <td><input type='checkbox' class='check created' /></td>
+    <td>Created between</td>
+    <td><input type='text' class='query date created start-date' /></td>
+    <td>and</td>
+    <td><input type='text' class='query date created end-date' /></td>
+  </tr>
+  <tr>
     <td><input type='checkbox' class='check updated' /></td>
     <td>Updated between</td>
     <td><input type='text' class='query date updated start-date' /></td>
