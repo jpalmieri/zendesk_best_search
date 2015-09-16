@@ -5,64 +5,81 @@
   return {
     events: {
       'app.activated':                      'initialize',
-      'click .tagButton':                   'tagSearch',
-      'click .commentButton':               'commentSearch',
-      'requestMacrosForTagSearch.done':     'filterTagResults',
-      'requestMacrosForCommentSearch.done': 'filterCommentResults'
+      'click .search.btn':                  'startSearch',
+      'requestMacros.done':                 'filterResults',
+      'click .stop.btn':                    'stopSearch'
     },
 
     requests: {
-      requestMacrosForTagSearch: function(url) {
+      requestMacros: function(url) {
         return {
           url: url || MACROS_URI,
           type: 'GET',
           dataType: 'json'
         };
-      },
-
-      requestMacrosForCommentSearch: function(url) {
-        return {
-          url: url || MACROS_URI,
-          type: 'GET',
-          dataType: 'json'
-        };
-      },
+      }
     },
 
     initialize: function() {
       this.switchTo('search');
+      this.stopped = true;
     },
 
     startSearch: function() {
-      this.$('.results ul').empty();
-      this.$('.searchButton').prop('disabled', true);
-      this.$('.query').prop('disabled', true);
-      this.$('.searchButton').prop('value', 'Searching...');
+      if ( this.$('.check:checked').length < 1 ) {
+        services.notify("Please check at least one condition's checkbox.", 'alert');
+      } else {
+        this.stopped = false;
+        this.$('.stop.btn').show();
+        this.$('.count').text('');
+        this.$('.results ul').empty();
+        this.$('.search.btn').prop('disabled', true);
+        this.$('.query').prop('disabled', true);
+        this.$('.search.btn').prop('value', 'Searching...');
+        this.ajax('requestMacros');
+      }
       return false;
     },
 
+    stopSearch: function() {
+      this.stopped = true;
+    },
+
     finishSearch: function() {
-      this.$('.searchButton').prop('disabled', false);
+      this.$('.search.btn').prop('disabled', false);
       this.$('.query').prop('disabled', false);
-      this.$('.searchButton').prop('value', 'Search');
+      this.$('.search.btn').prop('value', 'Search');
+      this.$('.stop.btn').hide();
+      this.stopped = true;
     },
 
-    tagSearch: function() {
-      this.startSearch();
-      this.ajax('requestMacrosForTagSearch');
-    },
-
-    commentSearch: function() {
-      this.startSearch();
-      this.ajax('requestMacrosForCommentSearch');
-    },
-
-    filterTagResults: function(data) {
+    filterResults: function(data) {
       console.log(data);
       var self = this;
+      var results = data.macros;
+
+      if ( this.$('.check.tag').is(':checked') ) {
+        results = this.filterTagResults(results);
+      }
+      if ( this.$('.check.comment').is(':checked') ) {
+        results = this.filterCommentResults(results);
+      }
+
+      this.displayResults(results);
+
+      // Get additional pages of api request results
+      if (data.next_page && !this.stopped){
+        this.ajax('requestMacros', data.next_page);
+      } else {
+        this.finishSearch();
+      }
+    },
+
+    filterTagResults: function(macros) {
+      var self = this;
       var results = [];
-      var query = this.$('.tagQuery').val();
-      var macros = data.macros;
+      var query = this.$('.query.tag').val();
+
       macros.forEach( function(macro) {
         var tags = self.getValues(macro);
         if ( tags.indexOf(query) > -1 ) {
@@ -70,22 +87,14 @@
         }
       });
 
-      this.displayResults(results);
-
-      // Get additional pages of api request results
-      if (data.next_page){
-        this.ajax('requestMacrosForTagSearch', data.next_page);
-      } else {
-        this.finishSearch();
-      }
+      return results;
     },
 
-    filterCommentResults: function(data) {
-      console.log(data);
+    filterCommentResults: function(macros) {
       var self = this;
       var results = [];
-      var query = this.$('.commentQuery').val();
-      var macros = data.macros;
+      var query = this.$('.query.comment').val();
+
       macros.forEach( function(macro) {
         var comments = self.getComments(macro);
         comments.forEach( function(comment) {
@@ -95,14 +104,7 @@
         });
       });
 
-      this.displayResults(results);
-
-      // Get additional pages of api request results
-      if (data.next_page){
-        this.ajax('requestMacrosForCommentSearch', data.next_page);
-      } else {
-        this.finishSearch();
-      }
+      return results;
     },
 
     displayResults: function (results) {
