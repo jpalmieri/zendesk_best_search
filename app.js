@@ -83,7 +83,7 @@
       results.forEach( function(macro) {
         macro.created_at = macro.created_at.substring(0,10);
         macro.updated_at = macro.updated_at.substring(0,10);
-      })
+      });
 
       this.displayResults(results);
 
@@ -101,9 +101,11 @@
 
       macros.forEach( function(macro) {
         var tags = this.getValues(macro);
-        if ( tags.indexOf(query) > -1 ) {
-          results.push(macro);
-        }
+        tags.forEach( function(tag) {
+          if ( tag.indexOf(query) > -1 ) {
+            results.push(macro);
+          }
+        });
       }.bind(this) );
 
       return results;
@@ -181,7 +183,7 @@
       var actions = this.getMacroActions(macro);
       var values = [];
       actions.forEach( function(action) {
-        values.push(action.value);
+        if (action.value) { values.push(action.value) };
       });
       return values;
     },
