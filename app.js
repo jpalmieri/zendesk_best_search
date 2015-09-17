@@ -34,6 +34,8 @@
       if ( this.$('.check:checked').length < 1 ) {
         services.notify("Please check at least one condition's checkbox.", 'alert');
       } else {
+        this.$('.results table').show();
+        this.$('.results tbody').empty();
         this.stopped = false;
         this.$('.spinner').show();
         this.$('.stop.btn').show();

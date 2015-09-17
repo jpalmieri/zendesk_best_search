@@ -6,6 +6,10 @@ form {
   border: 0;
 }
 
+.results table {
+  display: none;
+}
+
 input.stop.btn, .spinner {
   display: none;
 }
