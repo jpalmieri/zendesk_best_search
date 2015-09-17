@@ -77,6 +77,12 @@
         results = this.filterByUpdatedDate(results);
       }
 
+      // Remove times from dates
+      results.forEach( function(macro) {
+        macro.created_at = macro.created_at.substring(0,10);
+        macro.updated_at = macro.updated_at.substring(0,10);
+      })
+
       this.displayResults(results);
 
       // Get additional pages of api request results
@@ -155,7 +161,7 @@
       this.$('.results tbody').append(resultsTemplate);
 
       // Display result count
-      this.$('.count').html("<h3>Displaying " + this.$('.results tbody tr').length + " matches</h3>");
+      this.$('.count').html("<h3>Displaying " + this.$('.results tbody tr').length + " results</h3>");
 
     },
 
