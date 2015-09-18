@@ -1,0 +1,16 @@
+input {
+  background-color: #FFFFFF;
+  border: 1px solid #B1B1B1;
+}
+
+input.btn {
+  width: 100px;
+}
+
+td {
+  padding: 5px 10px;
+}
+
+input.stop.btn {
+  display: none;
+}

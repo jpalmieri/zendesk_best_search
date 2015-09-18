@@ -1,0 +1,27 @@
+<h2>Macro Search</h2>
+<form action="" method="POST">
+  <table>
+  <tr>
+    <td><input type='checkbox' class='check tag' /></td>
+    <td>Includes</td>
+    <td><input class='query tag' /></td>
+    <td>in tags</td>
+  </tr>
+  <tr>
+    <td><input type='checkbox' class='check comment' /></td>
+    <td>Includes</td>
+    <td><input class='query comment' /></td>
+    <td>in comments</td>
+  </tr>
+  <tr>
+    <td />
+    <td><input type="submit" value="Search" class="search btn" />
+    <td><input type="button" value="Stop" class="stop btn" />
+  </tr>
+  </table>
+</form>
+<div class="results">
+  <span class='count'></span>
+ <ul>
+ </ul>
+</div>
