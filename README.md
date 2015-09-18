@@ -12,4 +12,4 @@ A Zendesk navbar app which allows you to search for macros, using the Zendesk AP
 Please submit bug reports to Issues. Pull requests are welcome.
 
 ### Screenshot(s):
-![screenshot](https://i.gyazo.com/ce3116b542f25564f8e76e3816cebfac.png)
+![screenshot](https://i.gyazo.com/00e5f9a8693d0fd95aef8e786775428b.png)
