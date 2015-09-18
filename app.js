@@ -95,7 +95,7 @@
       macros.forEach( function(macro) {
         var comments = this.getComments(macro);
         comments.forEach( function(comment) {
-          if ( comment && comment.indexOf(query) > -1 ) {
+          if ( comment.indexOf(query) > -1 ) {
             results.push(macro);
           }
         });
@@ -139,7 +139,7 @@
       var actions = this.getMacroActions(macro);
       var comments = [];
       actions.forEach( function(action) {
-        if (action.field == "comment_value") {
+        if (action.value && action.field == "comment_value") {
           comments.push( action.value[1] );
         }
       });
