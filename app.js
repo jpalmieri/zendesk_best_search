@@ -26,9 +26,9 @@
       this.stopped = true;
     },
 
-    activate: function() {
+    activate: _.once(function() {
       this.$('.query.date').datepicker({ dateFormat: "yy-mm-dd" });
-    },
+    }),
 
     startSearch: function() {
       if ( this.$('.check:checked').length < 1 ) {
