@@ -55,7 +55,6 @@
 
     filterResults: function(data) {
       console.log(data);
-      var self = this;
       var results = data.macros;
 
       if ( this.$('.check.tag').is(':checked') ) {
@@ -76,33 +75,31 @@
     },
 
     filterTagResults: function(macros) {
-      var self = this;
       var results = [];
       var query = this.$('.query.tag').val();
 
       macros.forEach( function(macro) {
-        var tags = self.getValues(macro);
+        var tags = this.getValues(macro);
         if ( tags.indexOf(query) > -1 ) {
           results.push(macro);
         }
-      });
+      }.bind(this) );
 
       return results;
     },
 
     filterCommentResults: function(macros) {
-      var self = this;
       var results = [];
       var query = this.$('.query.comment').val();
 
       macros.forEach( function(macro) {
-        var comments = self.getComments(macro);
+        var comments = this.getComments(macro);
         comments.forEach( function(comment) {
           if ( comment && comment.indexOf(query) > -1 ) {
             results.push(macro);
           }
         });
-      });
+      }.bind(this) );
 
       return results;
     },
