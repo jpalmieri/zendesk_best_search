@@ -1,14 +1,15 @@
-# App name
+# Zendesk Macro Search
 
-[brief description of the app]
+A Zendesk navbar app which allows you to search for macros, using the Zendesk API.
 
-### The following information is displayed:
+### Search by:
 
-* info1
-* info2
-* info3
+* Tag
+* Comment
+* Created date
+* Updated date
 
-Please submit bug reports to [Insert Link](). Pull requests are welcome.
+Please submit bug reports to Issues. Pull requests are welcome.
 
 ### Screenshot(s):
-[put your screenshots down here.]
+![screenshot](https://i.gyazo.com/ce3116b542f25564f8e76e3816cebfac.png)

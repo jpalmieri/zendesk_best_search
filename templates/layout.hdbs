@@ -1,1 +1,9 @@
+<header>
+  <h3>{{setting 'name'}}</h3>
+</header>
 <section data-main />
+<footer>
+  <small class="pull-right">by
+    <a href="https://github.com/jpalmieri" target="_blank" class="muted">{{author.name}}</a>&nbsp;&nbsp;
+  </small>
+</footer>
