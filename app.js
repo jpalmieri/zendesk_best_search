@@ -79,7 +79,7 @@
       }
 
       // Remove times from dates
-      results.forEach( function(macro) {
+      _.each(results, function(macro) {
         macro.created_at = macro.created_at.substring(0,10);
         macro.updated_at = macro.updated_at.substring(0,10);
       });
@@ -98,7 +98,7 @@
       var results = [];
       var query = this.$('.query.tag').val().toLowerCase();
 
-      macros.forEach( function(macro) {
+      _.each(macros, function(macro) {
         var tags = this.getValues(macro);
         // Filter our tags which don't match query
         tags = _.filter(tags, function(tag) { return tag.indexOf(query) > -1; });
@@ -114,7 +114,7 @@
       var results = [];
       var query = this.$('.query.comment').val().toLowerCase();
 
-      macros.forEach( function(macro) {
+      _.each(macros, function(macro) {
         var comments = this.getComments(macro);
         // Filter our comments which don't match query
         comments = _.filter(comments, function(comment) { return comment.indexOf(query) > -1; });
@@ -131,7 +131,7 @@
       var startDate = new Date( this.$('.query.updated.start-date').val() );
       var endDate = new Date( this.$('.query.updated.end-date').val() );
 
-      macros.forEach( function(macro) {
+      _.each(macros, function(macro) {
         var updatedDate = new Date(macro.updated_at);
         if ( updatedDate > startDate && updatedDate < endDate) {
           results.push(macro);
@@ -146,7 +146,7 @@
       var startDate = new Date( this.$('.query.created.start-date').val() );
       var endDate = new Date( this.$('.query.created.end-date').val() );
 
-      macros.forEach( function(macro) {
+      _.each(macros, function(macro) {
         var createdDate = new Date(macro.created_at);
         if ( createdDate > startDate && createdDate < endDate) {
           results.push(macro);
@@ -172,7 +172,7 @@
 
     getMacroActions: function(macro) {
       var actions = [];
-      macro.actions.forEach( function(action) {
+      _.each(macro.actions, function(action) {
         actions.push(action);
       });
       return actions;
@@ -181,7 +181,7 @@
     getValues: function(macro) {
       var actions = this.getMacroActions(macro);
       var values = [];
-      actions.forEach( function(action) {
+      _.each(actions, function(action) {
         if (action.value) { values.push(action.value); }
       });
       return values;
@@ -190,7 +190,7 @@
     getComments: function(macro) {
       var actions = this.getMacroActions(macro);
       var comments = [];
-      actions.forEach( function(action) {
+      _.each(actions, function(action) {
         if (action.value && action.field == "comment_value") {
           comments.push( action.value[1].toLowerCase() );
         }
