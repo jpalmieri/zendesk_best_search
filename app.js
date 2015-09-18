@@ -63,7 +63,6 @@
     },
 
     filterResults: function(data) {
-      console.log(data);
       var results = data.macros;
 
       if ( this.$('.check.tag').is(':checked') ) {
@@ -101,11 +100,11 @@
 
       macros.forEach( function(macro) {
         var tags = this.getValues(macro);
-        tags.forEach( function(tag) {
-          if ( tag.indexOf(query) > -1 ) {
-            results.push(macro);
-          }
-        });
+        // Filter our tags which don't match query
+        tags = _.filter(tags, function(tag) { return tag.indexOf(query) > -1; });
+        if ( tags.length > 0 ) {
+          results.push(macro);
+        }
       }.bind(this) );
 
       return results;
@@ -117,11 +116,11 @@
 
       macros.forEach( function(macro) {
         var comments = this.getComments(macro);
-        comments.forEach( function(comment) {
-          if ( comment.indexOf(query) > -1 ) {
-            results.push(macro);
-          }
-        });
+        // Filter our comments which don't match query
+        comments = _.filter(comments, function(comment) { return comment.indexOf(query) > -1; });
+        if ( comments.length > 0 ) {
+          results.push(macro);
+        }
       }.bind(this) );
 
       return results;
@@ -183,7 +182,7 @@
       var actions = this.getMacroActions(macro);
       var values = [];
       actions.forEach( function(action) {
-        if (action.value) { values.push(action.value) };
+        if (action.value) { values.push(action.value); }
       });
       return values;
     },
