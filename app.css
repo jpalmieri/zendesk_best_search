@@ -13,3 +13,16 @@ form {
 input.stop.btn, .spinner {
   display: none;
 }
+
+.results th.sorted.ascending:after {
+  content: "\25bc";
+  padding-left: 2px;
+  font-size: 6px;
+}
+
+.results th.sorted:not(.ascending):after {
+  content: "\25b2";
+  padding-left: 2px;
+  font-size: 6px;
+}
+

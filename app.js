@@ -8,7 +8,8 @@
       'pane.activated':                     'activate',
       'click .search.btn':                  'startSearch',
       'requestMacros.done':                 'filterResults',
-      'click .stop.btn':                    'stopSearch'
+      'click .stop.btn':                    'stopSearch',
+      'click .results th':                  'sortTable'
     },
 
     requests: {
@@ -30,12 +31,45 @@
       this.$('.query.date').datepicker({ dateFormat: "yy-mm-dd" });
     }),
 
+    // Toggles acending/decending order of the column header clicked
+    sortTable: function(event) {
+      var $tr = this.$(event.target);
+      var position = $tr.index();
+      var $tableBody = $tr.closest('table').find('tbody');
+
+      $tr.addClass('sorted');
+      $tr.siblings().removeClass('sorted ascending');
+      $tr.toggleClass('ascending');
+
+      if ( $tr.hasClass('ascending') ) {
+        var greaterThan = 1;
+        var lessThan = -1;
+      } else {
+        var greaterThan = -1;
+        var lessThan = 1;
+      }
+
+      var newList = $tableBody.find('tr').sort( function(a,b) {
+        if ( this.$(a).find('td:eq(' + position + ')').text() > this.$(b).find('td:eq(' + position + ')').text() ){
+          return greaterThan;
+        }
+        if ( this.$(a).find('td:eq(' + position + ')').text() < this.$(b).find('td:eq(' + position + ')').text() ){
+          return lessThan;
+        }
+        return 0;
+      }.bind(this) );
+
+      $tableBody.empty();
+      $tableBody.append(newList);
+    },
+
     startSearch: function() {
       if ( this.$('.check:checked').length < 1 ) {
         services.notify("Please check at least one condition's checkbox.", 'alert');
       } else {
         this.$('.results table').show();
         this.$('.results tbody').empty();
+        this.$('.results th').removeClass('sorted ascending');
         this.stopped = false;
         this.$('.spinner').show();
         this.$('.stop.btn').show();
