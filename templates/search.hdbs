@@ -42,6 +42,7 @@
       <th>Title</th>
       <th>Created on</th>
       <th>Last updated</th>
+      <th>Status</th>
     </tr>
   </thead>
   <tbody>

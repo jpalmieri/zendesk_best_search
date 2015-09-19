@@ -36,17 +36,19 @@
       var $tr = this.$(event.target);
       var position = $tr.index();
       var $tableBody = $tr.closest('table').find('tbody');
+      var greaterThan,
+          lessThan;
 
       $tr.addClass('sorted');
       $tr.siblings().removeClass('sorted ascending');
       $tr.toggleClass('ascending');
 
       if ( $tr.hasClass('ascending') ) {
-        var greaterThan = 1;
-        var lessThan = -1;
+        greaterThan = 1;
+        lessThan = -1;
       } else {
-        var greaterThan = -1;
-        var lessThan = 1;
+        greaterThan = -1;
+        lessThan = 1;
       }
 
       var newList = $tableBody.find('tr').sort( function(a,b) {
