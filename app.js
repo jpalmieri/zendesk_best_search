@@ -66,7 +66,7 @@
     },
 
     startSearch: function() {
-      if ( this.$('.check:checked').length < 1 ) {
+      if ( this.$('.search-options .check:checked').length < 1 ) {
         services.notify("Please check at least one condition's checkbox.", 'alert');
       } else {
         this.$('.results table').show();
@@ -112,6 +112,9 @@
       }
       if ( this.$('.check.updated').is(':checked') ) {
         results = this.filterByUpdatedDate(results);
+      }
+      if ( !this.$('.check.status').is(':checked') ) {
+        results = _.filter(results, function(macro) { return macro.active === true; });
       }
 
       // Remove times from dates

@@ -1,5 +1,5 @@
 <form action="" method="POST" class='well'>
-  <table class='table'>
+  <table class='table search-options'>
     <tbody>
       <tr>
         <td><input type='checkbox' class='check tag' /></td>
@@ -31,6 +31,9 @@
   </table>
   <input type="submit" value="Search" class="search btn" />
   <input type="button" value="Stop" class="stop btn" />
+  <label class='checkbox pull-right'>
+    <input type='checkbox' class="check status" /> Inlcude inactive macros
+  </label>
   <span class='spinner'>{{spinner "dotted"}}</span>
 </form>
 
