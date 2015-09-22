@@ -52,17 +52,14 @@
       }
 
       var newList = $tableBody.find('tr').sort( function(a,b) {
-        if ( this.$(a).find('td:eq(' + position + ')').text() > this.$(b).find('td:eq(' + position + ')').text() ){
-          return greaterThan;
-        }
-        if ( this.$(a).find('td:eq(' + position + ')').text() < this.$(b).find('td:eq(' + position + ')').text() ){
-          return lessThan;
-        }
+        var itemA = this.$(a).find('td:eq(' + position + ')').text();
+        var itemB = this.$(b).find('td:eq(' + position + ')').text();
+        if ( itemA > itemB ) return greaterThan;
+        if ( itemA < itemB ) return lessThan;
         return 0;
       }.bind(this) );
 
-      $tableBody.empty();
-      $tableBody.append(newList);
+      $tableBody.empty().append(newList);
     },
 
     startSearch: function() {
