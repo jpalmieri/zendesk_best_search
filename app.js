@@ -70,7 +70,7 @@
         this.$('.results tbody').empty();
         this.$('.results th').removeClass('sorted ascending');
         this.stopped = false;
-        this.$('.spinner').show();
+        this.$('.icon-loading-spinner').css('display', 'inline-block');
         this.$('.stop.btn').show();
         this.$('.count').text('');
         this.$('.results ul').empty();
@@ -92,7 +92,7 @@
       this.$('.search.btn').prop('value', 'Search');
       this.$('.stop.btn').hide();
       this.stopped = true;
-      this.$('.spinner').hide();
+      this.$('.icon-loading-spinner').hide();
     },
 
     filterResults: function(data) {
@@ -200,7 +200,7 @@
       this.$('.results tbody').append(resultsTemplate);
 
       // Display result count
-      this.$('.count').html("<h3>Displaying " + this.$('.results tbody tr').length + " results</h3>");
+      this.$('.count').html("Displaying " + this.$('.results tbody tr').length + " results");
 
     },
 

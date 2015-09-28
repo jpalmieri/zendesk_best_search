@@ -10,7 +10,7 @@ form {
   display: none;
 }
 
-input.stop.btn, .spinner {
+input.stop.btn, .icon-loading-spinner {
   display: none;
 }
 
