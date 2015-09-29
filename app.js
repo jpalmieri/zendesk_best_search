@@ -9,7 +9,8 @@
       'click .search.btn':                  'startSearch',
       'requestMacros.done':                 'filterResults',
       'click .stop.btn':                    'stopSearch',
-      'click .results th':                  'sortTable'
+      'mousedown .results th':              'beforeSort',
+      'mouseup .results th':                'sortTable'
     },
 
     requests: {
@@ -31,15 +32,19 @@
       this.$('.query.date').datepicker({ dateFormat: "yy-mm-dd" });
     }),
 
+    beforeSort: function(event) {
+      this.$('.icon-loading-spinner').css('display', 'inline-block');
+      var $tr = this.$(event.target);
+      $tr.addClass('sorted');
+      $tr.siblings().removeClass('sorted ascending');
+      $tr.toggleClass('ascending');
+    },
+
     // Toggles acending/decending order of the column header clicked
     sortTable: function(event) {
       var $tr = this.$(event.target);
       var position = $tr.index();
       var $tableBody = $tr.closest('table').find('tbody');
-
-      $tr.addClass('sorted');
-      $tr.siblings().removeClass('sorted ascending');
-      $tr.toggleClass('ascending');
 
       var newList = $tableBody.find('tr').sort( function(a,b) {
         var itemA = this.$(a).find('td:eq(' + position + ')').text().toLowerCase();
@@ -52,6 +57,7 @@
       }.bind(this) );
 
       $tableBody.empty().append(newList);
+      this.$('.icon-loading-spinner').hide();
     },
 
     startSearch: function() {
