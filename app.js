@@ -46,17 +46,16 @@
       var position = $tr.index();
       var $tableBody = $tr.closest('table').find('tbody');
 
-      var newList = $tableBody.find('tr').sort( function(a,b) {
-        var itemA = this.$(a).find('td:eq(' + position + ')').text().toLowerCase();
-        var itemB = this.$(b).find('td:eq(' + position + ')').text().toLowerCase();
-        if ( $tr.hasClass('ascending') ) {
-          return (itemA > itemB) ? 1 : (itemA < itemB) ? -1 : 0;
-        } else {
-          return (itemA > itemB) ? -1 : (itemA < itemB) ? 1 : 0;
-        }
+      var newList = _.sortBy( $tableBody.find('tr'), function(el) {
+        return this.$(el).find('td:eq(' + position + ')').text().toLowerCase();
       }.bind(this) );
 
-      $tableBody.empty().append(newList);
+      if ( $tr.hasClass('ascending') ) {
+        $tableBody.empty().append(newList);
+      } else {
+        $tableBody.empty().append( newList.reverse() );
+      }
+
       this.$('.icon-loading-spinner').hide();
     },
 
