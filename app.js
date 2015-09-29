@@ -34,23 +34,23 @@
 
     beforeSort: function(event) {
       this.$('.icon-loading-spinner').css('display', 'inline-block');
-      var $tr = this.$(event.target);
-      $tr.addClass('sorted');
-      $tr.siblings().removeClass('sorted ascending');
-      $tr.toggleClass('ascending');
+      var $th = this.$(event.target);
+      $th.addClass('sorted');
+      $th.siblings().removeClass('sorted ascending');
+      $th.toggleClass('ascending');
     },
 
     // Toggles acending/decending order of the column header clicked
     sortTable: function(event) {
-      var $tr = this.$(event.target);
-      var position = $tr.index();
-      var $tableBody = $tr.closest('table').find('tbody');
+      var $th = this.$(event.target);
+      var position = $th.index();
+      var $tableBody = $th.closest('table').find('tbody');
 
       var newList = _.sortBy( $tableBody.find('tr'), function(el) {
         return this.$(el).find('td:eq(' + position + ')').text().toLowerCase();
       }.bind(this) );
 
-      if ( $tr.hasClass('ascending') ) {
+      if ( $th.hasClass('ascending') ) {
         $tableBody.empty().append(newList);
       } else {
         $tableBody.empty().append( newList.reverse() );
