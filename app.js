@@ -36,27 +36,19 @@
       var $tr = this.$(event.target);
       var position = $tr.index();
       var $tableBody = $tr.closest('table').find('tbody');
-      var greaterThan,
-          lessThan;
 
       $tr.addClass('sorted');
       $tr.siblings().removeClass('sorted ascending');
       $tr.toggleClass('ascending');
 
-      if ( $tr.hasClass('ascending') ) {
-        greaterThan = 1;
-        lessThan = -1;
-      } else {
-        greaterThan = -1;
-        lessThan = 1;
-      }
-
       var newList = $tableBody.find('tr').sort( function(a,b) {
-        var itemA = this.$(a).find('td:eq(' + position + ')').text();
-        var itemB = this.$(b).find('td:eq(' + position + ')').text();
-        if ( itemA > itemB ) return greaterThan;
-        if ( itemA < itemB ) return lessThan;
-        return 0;
+        var itemA = this.$(a).find('td:eq(' + position + ')').text().toLowerCase();
+        var itemB = this.$(b).find('td:eq(' + position + ')').text().toLowerCase();
+        if ( $tr.hasClass('ascending') ) {
+          return (itemA > itemB) ? 1 : (itemA < itemB) ? -1 : 0;
+        } else {
+          return (itemA > itemB) ? -1 : (itemA < itemB) ? 1 : 0;
+        }
       }.bind(this) );
 
       $tableBody.empty().append(newList);
