@@ -96,10 +96,10 @@
       var results = data.macros;
 
       if ( this.$('.check.tag').is(':checked') ) {
-        results = this.filterTagResults(results);
+        results = this.filterByTags(results);
       }
       if ( this.$('.check.comment').is(':checked') ) {
-        results = this.filterCommentResults(results);
+        results = this.filterByComments(results);
       }
       if ( this.$('.check.created').is(':checked') ) {
         results = this.filterByCreatedDate(results);
@@ -127,47 +127,42 @@
       }
     },
 
-    filterTagResults: function(macros) {
-      var results = [];
+    filterByTags: function(macros) {
       var query = this.$('.query.tag').val().toLowerCase();
 
-      _.each(macros, function(macro) {
-        var tags = this.getValues(macro);
-        // Filter our tags which don't match query
-        tags = _.filter(tags, function(tag) { return tag.indexOf(query) > -1; });
-        if ( tags.length > 0 ) {
-          results.push(macro);
-        }
+      var results = _.filter(macros, function(macro) {
+        // Filter out tags which don't match query
+        var tags = _.filter(this.getValues(macro), function(tag) {
+          return tag.indexOf(query) > -1;
+        });
+        if ( tags.length > 0 ) return macro;
       }.bind(this) );
 
       return results;
     },
 
-    filterCommentResults: function(macros) {
-      var results = [];
+    filterByComments: function(macros) {
       var query = this.$('.query.comment').val().toLowerCase();
 
-      _.each(macros, function(macro) {
-        var comments = this.getComments(macro);
-        // Filter our comments which don't match query
-        comments = _.filter(comments, function(comment) { return comment.indexOf(query) > -1; });
-        if ( comments.length > 0 ) {
-          results.push(macro);
-        }
+      var results = _.filter(macros, function(macro) {
+        // Filter out comments which don't match query
+        var comments = _.filter(this.getComments(macro), function(comment) {
+          return comment.indexOf(query) > -1;
+        });
+        if ( comments.length > 0 ) return macro;
       }.bind(this) );
 
       return results;
     },
 
     filterByUpdatedDate: function(macros) {
-      var results = [];
       var startDate = new Date( this.$('.query.updated.start-date').val() );
       var endDate = new Date( this.$('.query.updated.end-date').val() );
 
-      _.each(macros, function(macro) {
+      var results = _.filter(macros, function(macro) {
         var updatedDate = new Date(macro.updated_at);
         if ( updatedDate > startDate && updatedDate < endDate) {
-          results.push(macro);
+          return macro;
         }
       });
 
@@ -175,14 +170,13 @@
     },
 
     filterByCreatedDate: function(macros) {
-      var results = [];
       var startDate = new Date( this.$('.query.created.start-date').val() );
       var endDate = new Date( this.$('.query.created.end-date').val() );
 
-      _.each(macros, function(macro) {
+      var results = _.filter(macros, function(macro) {
         var createdDate = new Date(macro.created_at);
         if ( createdDate > startDate && createdDate < endDate) {
-          results.push(macro);
+          return macro;
         }
       });
 
@@ -203,30 +197,18 @@
 
     // Helpers
 
-    getMacroActions: function(macro) {
-      var actions = [];
-      _.each(macro.actions, function(action) {
-        actions.push(action);
-      });
-      return actions;
-    },
-
     getValues: function(macro) {
-      var actions = this.getMacroActions(macro);
-      var values = [];
-      _.each(actions, function(action) {
-        if (action.value) { values.push(action.value); }
-      });
-      return values;
+      var values = _.pluck(macro.actions, 'value');
+      // Remove null values
+      return _.reject(values, function(value) { return !value; });
     },
 
     getComments: function(macro) {
-      var actions = this.getMacroActions(macro);
-      var comments = [];
-      _.each(actions, function(action) {
-        if (action.value && action.field == "comment_value") {
-          comments.push( action.value[1].toLowerCase() );
-        }
+      var actions = _.filter(macro.actions, function(action) {
+        return action.value && action.field == "comment_value";
+      });
+      var comments = _.map(actions, function(action) {
+        return action.value[1].toLowerCase();
       });
       return comments;
     }
