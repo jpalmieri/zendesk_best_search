@@ -1,22 +1,34 @@
 (function() {
 
-  var MACROS_URI = '/api/v2/macros.json';
+  var RULES_CONSTANTS = {
+    macros: {
+      api_endpoint: '/api/v2/macros.json',
+      items: 'macros',
+      template: 'macro-search'
+    },
+    triggers: {
+      api_endpoint: '/api/v2/triggers.json',
+      items: 'triggers',
+      template: 'trigger-search'
+    }
+  };
 
   return {
     events: {
       'app.activated':                      'initialize',
       'pane.activated':                     'activate',
       'click .search.btn':                  'startSearch',
-      'requestMacros.done':                 'filterResults',
+      'requestRules.done':                  'filterResults',
       'click .stop.btn':                    'stopSearch',
       'mousedown .results th':              'beforeSort',
-      'mouseup .results th':                'sortTable'
+      'mouseup .results th':                'sortTable',
+      'change select.rules':                'switchSearchTemplate'
     },
 
     requests: {
-      requestMacros: function(url) {
+      requestRules: function(url) {
         return {
-          url: url || MACROS_URI,
+          url: url || this.rulesConstants.api_endpoint,
           type: 'GET',
           dataType: 'json'
         };
@@ -24,13 +36,21 @@
     },
 
     initialize: function() {
-      this.switchTo('search');
+      this.switchTo('macro-search');
       this.stopped = true;
+      this.rulesConstants = RULES_CONSTANTS.macros;
     },
 
-    activate: _.once(function() {
+    activate: function() {
       this.$('.query.date').datepicker({ dateFormat: "yy-mm-dd" });
-    }),
+    },
+
+    switchSearchTemplate: function(event) {
+      var $selectedOption = this.$(event.target).find('option:selected');
+      this.rulesConstants = RULES_CONSTANTS[ $selectedOption.data('type') ];
+      this.switchTo( this.rulesConstants.template );
+      this.activate();
+    },
 
     beforeSort: function(event) {
       this.$('.icon-loading-spinner').css('display', 'inline-block');
@@ -74,7 +94,7 @@
         this.$('.search.btn').prop('disabled', true);
         this.$('.query').prop('disabled', true);
         this.$('.search.btn').prop('value', 'Searching...');
-        this.ajax('requestMacros');
+        this.ajax('requestRules');
       }
       return false;
     },
@@ -93,13 +113,16 @@
     },
 
     filterResults: function(data) {
-      var results = data.macros;
+      var results = data[this.rulesConstants.items];
 
       if ( this.$('.check.tag').is(':checked') ) {
         results = this.filterByTags(results);
       }
       if ( this.$('.check.comment').is(':checked') ) {
         results = this.filterByComments(results);
+      }
+      if ( this.$('.check.note').is(':checked') ) {
+        results = this.filterByNotifications(results);
       }
       if ( this.$('.check.created').is(':checked') ) {
         results = this.filterByCreatedDate(results);
@@ -121,7 +144,7 @@
 
       // Get additional pages of api request results
       if (data.next_page && !this.stopped){
-        this.ajax('requestMacros', data.next_page);
+        this.ajax('requestRules', data.next_page);
       } else {
         this.finishSearch();
       }
@@ -150,6 +173,20 @@
           return comment.indexOf(query) > -1;
         });
         if ( comments.length > 0 ) return macro;
+      }.bind(this) );
+
+      return results;
+    },
+
+    filterByNotifications: function(triggers) {
+      var query = this.$('.query.note').val().toLowerCase();
+
+      var results = _.filter(triggers, function(trigger) {
+        // Filter out notifications which don't match query
+        var notifications = _.filter(this.getNotifications(trigger), function(notification) {
+          return notification.indexOf(query) > -1;
+        });
+        if ( notifications.length > 0 ) return trigger;
       }.bind(this) );
 
       return results;
@@ -211,6 +248,16 @@
         return action.value[1].toLowerCase();
       });
       return comments;
+    },
+
+    getNotifications: function(trigger) {
+      var actions = _.filter(trigger.actions, function(action) {
+        return action.value && action.field.indexOf("notification") > -1;
+      });
+      var notifications = _.map(actions, function(action) {
+        return action.value[action.value.length - 1].toLowerCase();
+      });
+      return notifications;
     }
 
   };

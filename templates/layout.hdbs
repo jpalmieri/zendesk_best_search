@@ -1,7 +1,40 @@
 <header>
   <h3>{{setting 'name'}}</h3>
 </header>
-<section data-main />
+
+<form action="" method="POST" class='well'>
+  <select class='rules'>
+    <option data-type="macros" data-url="macros">Macros</option>
+    <option data-type="triggers" data-url="triggers">Triggers</option>
+  </select>
+
+      <section data-main />
+
+  <input type="submit" value="Search" class="search btn" />
+  <input type="button" value="Stop" class="stop btn" />
+  <label class='checkbox pull-right'>
+    <input type='checkbox' class="check status" /> Inlcude inactive items
+  </label>
+</form>
+
+<div class="results">
+ <h4 class="list-heading">
+  <span class='count'></span><i class="icon-loading-spinner"></i>
+</h4>
+ <table class='table table-striped'>
+  <thead>
+    <tr>
+      <th>Title</th>
+      <th>Created on</th>
+      <th>Last updated</th>
+      <th>Status</th>
+    </tr>
+  </thead>
+  <tbody>
+  </tbody>
+ </table>
+</div>
+
 <footer>
   <small class="pull-right">by
     <a href="https://github.com/jpalmieri" target="_blank" class="muted">{{author.name}}</a>&nbsp;&nbsp;

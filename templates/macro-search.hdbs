@@ -1,0 +1,30 @@
+<table class='table search-options'>
+  <tbody>
+    <tr>
+      <td><input type='checkbox' class='check tag' /></td>
+      <td>Includes</td>
+      <td><input type='text' class='query tag' /></td>
+      <td>in tags</td>
+    </tr>
+    <tr>
+      <td><input type='checkbox' class='check comment' /></td>
+      <td>Includes</td>
+      <td><input type='text' class='query comment' /></td>
+      <td>in comments</td>
+    </tr>
+    <tr>
+      <td><input type='checkbox' class='check created' /></td>
+      <td>Created between</td>
+      <td><input type='text' class='query date created start-date' /></td>
+      <td>and</td>
+      <td><input type='text' class='query date created end-date' /></td>
+    </tr>
+    <tr>
+      <td><input type='checkbox' class='check updated' /></td>
+      <td>Updated between</td>
+      <td><input type='text' class='query date updated start-date' /></td>
+      <td>and</td>
+      <td><input type='text' class='query date updated end-date' /></td>
+    </tr>
+  </tbody>
+ </table>
