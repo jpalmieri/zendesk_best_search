@@ -9,7 +9,8 @@
       'click .search.btn':                  'startSearch',
       'requestMacros.done':                 'filterResults',
       'click .stop.btn':                    'stopSearch',
-      'click .results th':                  'sortTable'
+      'mousedown .results th':              'beforeSort',
+      'mouseup .results th':                'sortTable'
     },
 
     requests: {
@@ -31,35 +32,31 @@
       this.$('.query.date').datepicker({ dateFormat: "yy-mm-dd" });
     }),
 
+    beforeSort: function(event) {
+      this.$('.icon-loading-spinner').css('display', 'inline-block');
+      var $th = this.$(event.target);
+      $th.addClass('sorted');
+      $th.siblings().removeClass('sorted ascending');
+      $th.toggleClass('ascending');
+    },
+
     // Toggles acending/decending order of the column header clicked
     sortTable: function(event) {
-      var $tr = this.$(event.target);
-      var position = $tr.index();
-      var $tableBody = $tr.closest('table').find('tbody');
-      var greaterThan,
-          lessThan;
+      var $th = this.$(event.target);
+      var position = $th.index();
+      var $tableBody = $th.closest('table').find('tbody');
 
-      $tr.addClass('sorted');
-      $tr.siblings().removeClass('sorted ascending');
-      $tr.toggleClass('ascending');
-
-      if ( $tr.hasClass('ascending') ) {
-        greaterThan = 1;
-        lessThan = -1;
-      } else {
-        greaterThan = -1;
-        lessThan = 1;
-      }
-
-      var newList = $tableBody.find('tr').sort( function(a,b) {
-        var itemA = this.$(a).find('td:eq(' + position + ')').text();
-        var itemB = this.$(b).find('td:eq(' + position + ')').text();
-        if ( itemA > itemB ) return greaterThan;
-        if ( itemA < itemB ) return lessThan;
-        return 0;
+      var newList = _.sortBy( $tableBody.find('tr'), function(el) {
+        return this.$(el).find('td:eq(' + position + ')').text().toLowerCase();
       }.bind(this) );
 
-      $tableBody.empty().append(newList);
+      if ( $th.hasClass('ascending') ) {
+        $tableBody.empty().append(newList);
+      } else {
+        $tableBody.empty().append( newList.reverse() );
+      }
+
+      this.$('.icon-loading-spinner').hide();
     },
 
     startSearch: function() {
@@ -70,7 +67,7 @@
         this.$('.results tbody').empty();
         this.$('.results th').removeClass('sorted ascending');
         this.stopped = false;
-        this.$('.spinner').show();
+        this.$('.icon-loading-spinner').css('display', 'inline-block');
         this.$('.stop.btn').show();
         this.$('.count').text('');
         this.$('.results ul').empty();
@@ -92,7 +89,7 @@
       this.$('.search.btn').prop('value', 'Search');
       this.$('.stop.btn').hide();
       this.stopped = true;
-      this.$('.spinner').hide();
+      this.$('.icon-loading-spinner').hide();
     },
 
     filterResults: function(data) {
@@ -200,7 +197,7 @@
       this.$('.results tbody').append(resultsTemplate);
 
       // Display result count
-      this.$('.count').html("<h3>Displaying " + this.$('.results tbody tr').length + " results</h3>");
+      this.$('.count').html("Displaying " + this.$('.results tbody tr').length + " results");
 
     },
 

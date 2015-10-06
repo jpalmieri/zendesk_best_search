@@ -34,11 +34,12 @@
   <label class='checkbox pull-right'>
     <input type='checkbox' class="check status" /> Inlcude inactive macros
   </label>
-  <span class='spinner'>{{spinner "dotted"}}</span>
 </form>
 
 <div class="results">
- <span class='count'></span>
+ <h4 class="list-heading">
+  <span class='count'></span><i class="icon-loading-spinner"></i>
+</h4>
  <table class='table table-striped'>
   <thead>
     <tr>
@@ -52,3 +53,5 @@
   </tbody>
  </table>
 </div>
+
+
