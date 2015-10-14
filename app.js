@@ -1,17 +1,6 @@
 (function() {
 
-  var RULES_CONSTANTS = {
-    macros: {
-      api_endpoint: '/api/v2/macros.json',
-      items: 'macros',
-      template: 'macro-search'
-    },
-    triggers: {
-      api_endpoint: '/api/v2/triggers.json',
-      items: 'triggers',
-      template: 'trigger-search'
-    }
-  };
+  BASE_URL = '/api/v2/';
 
   return {
     events: {
@@ -28,7 +17,7 @@
     requests: {
       requestRules: function(url) {
         return {
-          url: url || this.rulesConstants.api_endpoint,
+          url: url,
           type: 'GET',
           dataType: 'json'
         };
@@ -36,9 +25,8 @@
     },
 
     initialize: function() {
-      this.switchTo('macro-search');
+      this.switchTo('macros-search');
       this.stopped = true;
-      this.rulesConstants = RULES_CONSTANTS.macros;
     },
 
     activate: function() {
@@ -47,8 +35,7 @@
 
     switchSearchTemplate: function(event) {
       var $selectedOption = this.$(event.target).find('option:selected');
-      this.rulesConstants = RULES_CONSTANTS[ $selectedOption.data('type') ];
-      this.switchTo( this.rulesConstants.template );
+      this.switchTo( $selectedOption.data('type') + '-search' );
       this.activate();
     },
 
@@ -79,6 +66,17 @@
       this.$('.icon-loading-spinner').hide();
     },
 
+    generateUrl: function() {
+      var type = this.$('select.rules').find('option:selected').data('type');
+      var onlyActive = !this.$('.check.status').is(':checked');
+
+      var url = BASE_URL + type;
+      if (onlyActive) url += '/active';
+      url += '.json';
+
+      return url;
+    },
+
     startSearch: function() {
       if ( this.$('.search-options .check:checked').length < 1 ) {
         services.notify("Please check at least one condition's checkbox.", 'alert');
@@ -94,7 +92,8 @@
         this.$('.search.btn').prop('disabled', true);
         this.$('.query').prop('disabled', true);
         this.$('.search.btn').prop('value', 'Searching...');
-        this.ajax('requestRules');
+
+        this.ajax( 'requestRules', this.generateUrl() );
       }
       return false;
     },
@@ -113,7 +112,8 @@
     },
 
     filterResults: function(data) {
-      var results = data[this.rulesConstants.items];
+      var type = this.$('select.rules').find('option:selected').data('type');
+      var results = data[type];
 
       if ( this.$('.check.tag').is(':checked') ) {
         results = this.filterByTags(results);
@@ -129,9 +129,6 @@
       }
       if ( this.$('.check.updated').is(':checked') ) {
         results = this.filterByUpdatedDate(results);
-      }
-      if ( !this.$('.check.status').is(':checked') ) {
-        results = _.filter(results, function(macro) { return macro.active === true; });
       }
 
       // Remove times from dates
