@@ -114,26 +114,19 @@
       var results = data[type];
 
       if ( this.$('.check.tag').is(':checked') ) {
-        var query = this.$('.query.tag').val().toLowerCase();
-        results = this.filter.byTag(results, query);
+        results = this.filter.byTag(results);
       }
       if ( this.$('.check.comment').is(':checked') ) {
-        var query = this.$('.query.comment').val().toLowerCase();
-        results = this.filter.byComment(results, query);
+        results = this.filter.byComment(results);
       }
       if ( this.$('.check.note').is(':checked') ) {
-        var query = this.$('.query.note').val().toLowerCase();
-        results = this.filter.byNotification(results, query);
+        results = this.filter.byNote(results);
       }
       if ( this.$('.check.created').is(':checked') ) {
-        var startDate = new Date( this.$('.query.created.start-date').val() );
-        var endDate = new Date( this.$('.query.created.end-date').val() );
-        results = this.filter.byCreatedDate(results, startDate, endDate);
+        results = this.filter.byCreatedDate(results);
       }
       if ( this.$('.check.updated').is(':checked') ) {
-        var startDate = new Date( this.$('.query.updated.start-date').val() );
-        var endDate = new Date( this.$('.query.updated.end-date').val() );
-        results = this.filter.byUpdatedDate(results, startDate, endDate);
+        results = this.filter.byUpdatedDate(results);
       }
 
       // Remove times from dates
@@ -154,8 +147,8 @@
 
 
     filter: {
-
-      byTag: function(items, query) {
+      byTag: function(items) {
+        var query = this._getStringQuery('tag');
         var results = _.filter(items, function(item) {
           // Filter out tags which don't match query
           var tags = _.filter(this._getValues(item), function(tag) {
@@ -167,7 +160,8 @@
         return results;
       },
 
-      byComment: function(items, query) {
+      byComment: function(items) {
+        var query = this._getStringQuery('comment');
         var results = _.filter(items, function(item) {
           // Filter out comments which don't match query
           var comments = _.filter(this._getComments(item), function(comment) {
@@ -179,7 +173,8 @@
         return results;
       },
 
-      byNotification: function(triggers, query) {
+      byNote: function(triggers) {
+        var query = this._getStringQuery('note');
         var results = _.filter(triggers, function(trigger) {
           // Filter out notifications which don't match query
           var notifications = _.filter(this._getNotifications(trigger), function(notification) {
@@ -191,7 +186,9 @@
         return results;
       },
 
-      byUpdatedDate: function(items, startDate, endDate) {
+      byUpdatedDate: function(items) {
+        var startDate = this._getStartDateQuery('updated');
+        var endDate = this._getEndDateQuery('updated');
         var results = _.filter(items, function(item) {
           var updatedDate = new Date(item.updated_at);
           if ( updatedDate > startDate && updatedDate < endDate) {
@@ -202,7 +199,9 @@
         return results;
       },
 
-      byCreatedDate: function(items, startDate, endDate) {
+      byCreatedDate: function(items) {
+        var startDate = this._getStartDateQuery('created');
+        var endDate = this._getEndDateQuery('created');
         var results = _.filter(items, function(item) {
           var createdDate = new Date(item.created_at);
           if ( createdDate > startDate && createdDate < endDate) {
@@ -237,7 +236,19 @@
           return action.value[action.value.length - 1].toLowerCase();
         });
         return notifications;
-      }
+      },
+
+      _getStringQuery: function(type) {
+        return this.$('.query.' + type).val().toLowerCase();
+      }.bind(this),
+
+      _getStartDateQuery: function(type) {
+        return new Date( this.$('.query.' + type + '.start-date').val().toLowerCase() );
+      }.bind(this),
+
+      _getEndDateQuery: function(type) {
+        return new Date( this.$('.query.' + type + '.end-date').val().toLowerCase() );
+      }.bind(this),
     },
 
     displayResults: function (results) {
