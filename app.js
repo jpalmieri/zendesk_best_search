@@ -91,7 +91,6 @@
         this.$('.results ul').empty();
         this.$('.search.btn').prop('disabled', true);
         this.$('.query').prop('disabled', true);
-        this.$('.search.btn').prop('value', 'Searching...');
 
         this.ajax( 'requestRules', this.generateUrl() );
       }
@@ -105,7 +104,6 @@
     finishSearch: function() {
       this.$('.search.btn').prop('disabled', false);
       this.$('.query').prop('disabled', false);
-      this.$('.search.btn').prop('value', 'Search');
       this.$('.stop.btn').hide();
       this.stopped = true;
       this.$('.icon-loading-spinner').hide();
