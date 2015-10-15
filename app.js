@@ -114,19 +114,26 @@
       var results = data[type];
 
       if ( this.$('.check.tag').is(':checked') ) {
-        results = this.filterByTags(results);
+        var query = this.$('.query.tag').val().toLowerCase();
+        results = this.filter.byTag(results, query);
       }
       if ( this.$('.check.comment').is(':checked') ) {
-        results = this.filterByComments(results);
+        var query = this.$('.query.comment').val().toLowerCase();
+        results = this.filter.byComment(results, query);
       }
       if ( this.$('.check.note').is(':checked') ) {
-        results = this.filterByNotifications(results);
+        var query = this.$('.query.note').val().toLowerCase();
+        results = this.filter.byNotification(results, query);
       }
       if ( this.$('.check.created').is(':checked') ) {
-        results = this.filterByCreatedDate(results);
+        var startDate = new Date( this.$('.query.created.start-date').val() );
+        var endDate = new Date( this.$('.query.created.end-date').val() );
+        results = this.filter.byCreatedDate(results, startDate, endDate);
       }
       if ( this.$('.check.updated').is(':checked') ) {
-        results = this.filterByUpdatedDate(results);
+        var startDate = new Date( this.$('.query.updated.start-date').val() );
+        var endDate = new Date( this.$('.query.updated.end-date').val() );
+        results = this.filter.byUpdatedDate(results, startDate, endDate);
       }
 
       // Remove times from dates
@@ -145,74 +152,92 @@
       }
     },
 
-    filterByTags: function(macros) {
-      var query = this.$('.query.tag').val().toLowerCase();
 
-      var results = _.filter(macros, function(macro) {
-        // Filter out tags which don't match query
-        var tags = _.filter(this.getValues(macro), function(tag) {
-          return tag.indexOf(query) > -1;
+    filter: {
+
+      byTag: function(items, query) {
+        var results = _.filter(items, function(item) {
+          // Filter out tags which don't match query
+          var tags = _.filter(this._getValues(item), function(tag) {
+            return tag.indexOf(query) > -1;
+          });
+          if ( tags.length > 0 ) return item;
+        }.bind(this) );
+
+        return results;
+      },
+
+      byComment: function(items, query) {
+        var results = _.filter(items, function(item) {
+          // Filter out comments which don't match query
+          var comments = _.filter(this._getComments(item), function(comment) {
+            return comment.indexOf(query) > -1;
+          });
+          if ( comments.length > 0 ) return item;
+        }.bind(this) );
+
+        return results;
+      },
+
+      byNotification: function(triggers, query) {
+        var results = _.filter(triggers, function(trigger) {
+          // Filter out notifications which don't match query
+          var notifications = _.filter(this._getNotifications(trigger), function(notification) {
+            return notification.indexOf(query) > -1;
+          });
+          if ( notifications.length > 0 ) return trigger;
+        }.bind(this) );
+
+        return results;
+      },
+
+      byUpdatedDate: function(items, startDate, endDate) {
+        var results = _.filter(items, function(item) {
+          var updatedDate = new Date(item.updated_at);
+          if ( updatedDate > startDate && updatedDate < endDate) {
+            return item;
+          }
         });
-        if ( tags.length > 0 ) return macro;
-      }.bind(this) );
 
-      return results;
-    },
+        return results;
+      },
 
-    filterByComments: function(macros) {
-      var query = this.$('.query.comment').val().toLowerCase();
-
-      var results = _.filter(macros, function(macro) {
-        // Filter out comments which don't match query
-        var comments = _.filter(this.getComments(macro), function(comment) {
-          return comment.indexOf(query) > -1;
+      byCreatedDate: function(items, startDate, endDate) {
+        var results = _.filter(items, function(item) {
+          var createdDate = new Date(item.created_at);
+          if ( createdDate > startDate && createdDate < endDate) {
+            return item;
+          }
         });
-        if ( comments.length > 0 ) return macro;
-      }.bind(this) );
 
-      return results;
-    },
+        return results;
+      },
 
-    filterByNotifications: function(triggers) {
-      var query = this.$('.query.note').val().toLowerCase();
+      _getValues: function(macro) {
+        var values = _.pluck(macro.actions, 'value');
+        // Remove null values
+        return _.reject(values, function(value) { return !value; });
+      },
 
-      var results = _.filter(triggers, function(trigger) {
-        // Filter out notifications which don't match query
-        var notifications = _.filter(this.getNotifications(trigger), function(notification) {
-          return notification.indexOf(query) > -1;
+      _getComments: function(macro) {
+        var actions = _.filter(macro.actions, function(action) {
+          return action.value && action.field == "comment_value";
         });
-        if ( notifications.length > 0 ) return trigger;
-      }.bind(this) );
+        var comments = _.map(actions, function(action) {
+          return action.value[1].toLowerCase();
+        });
+        return comments;
+      },
 
-      return results;
-    },
-
-    filterByUpdatedDate: function(macros) {
-      var startDate = new Date( this.$('.query.updated.start-date').val() );
-      var endDate = new Date( this.$('.query.updated.end-date').val() );
-
-      var results = _.filter(macros, function(macro) {
-        var updatedDate = new Date(macro.updated_at);
-        if ( updatedDate > startDate && updatedDate < endDate) {
-          return macro;
-        }
-      });
-
-      return results;
-    },
-
-    filterByCreatedDate: function(macros) {
-      var startDate = new Date( this.$('.query.created.start-date').val() );
-      var endDate = new Date( this.$('.query.created.end-date').val() );
-
-      var results = _.filter(macros, function(macro) {
-        var createdDate = new Date(macro.created_at);
-        if ( createdDate > startDate && createdDate < endDate) {
-          return macro;
-        }
-      });
-
-      return results;
+      _getNotifications: function(trigger) {
+        var actions = _.filter(trigger.actions, function(action) {
+          return action.value && action.field.indexOf("notification") > -1;
+        });
+        var notifications = _.map(actions, function(action) {
+          return action.value[action.value.length - 1].toLowerCase();
+        });
+        return notifications;
+      }
     },
 
     displayResults: function (results) {
@@ -226,35 +251,6 @@
       this.$('.count').html("Displaying " + this.$('.results tbody tr').length + " results");
 
     },
-
-    // Helpers
-
-    getValues: function(macro) {
-      var values = _.pluck(macro.actions, 'value');
-      // Remove null values
-      return _.reject(values, function(value) { return !value; });
-    },
-
-    getComments: function(macro) {
-      var actions = _.filter(macro.actions, function(action) {
-        return action.value && action.field == "comment_value";
-      });
-      var comments = _.map(actions, function(action) {
-        return action.value[1].toLowerCase();
-      });
-      return comments;
-    },
-
-    getNotifications: function(trigger) {
-      var actions = _.filter(trigger.actions, function(action) {
-        return action.value && action.field.indexOf("notification") > -1;
-      });
-      var notifications = _.map(actions, function(action) {
-        return action.value[action.value.length - 1].toLowerCase();
-      });
-      return notifications;
-    }
-
   };
 
 }());
