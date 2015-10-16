@@ -1,22 +1,23 @@
 (function() {
 
-  var MACROS_URI = '/api/v2/macros.json';
+  var BASE_URL = '/api/v2/';
 
   return {
     events: {
       'app.activated':                      'initialize',
       'pane.activated':                     'activate',
       'click .search.btn':                  'startSearch',
-      'requestMacros.done':                 'filterResults',
+      'requestRules.done':                  'filterResults',
       'click .stop.btn':                    'stopSearch',
       'mousedown .results th':              'beforeSort',
-      'mouseup .results th':                'sortTable'
+      'mouseup .results th':                'sortTable',
+      'change select.rules':                'switchSearchTemplate'
     },
 
     requests: {
-      requestMacros: function(url) {
+      requestRules: function(url) {
         return {
-          url: url || MACROS_URI,
+          url: url,
           type: 'GET',
           dataType: 'json'
         };
@@ -24,20 +25,93 @@
     },
 
     initialize: function() {
-      this.switchTo('search');
+      this.switchTo('macros-search');
       this.stopped = true;
     },
 
-    activate: _.once(function() {
+    activate: function() {
       this.$('.query.date').datepicker({ dateFormat: "yy-mm-dd" });
-    }),
+    },
 
-    beforeSort: function(event) {
-      this.$('.icon-loading-spinner').css('display', 'inline-block');
-      var $th = this.$(event.target);
-      $th.addClass('sorted');
-      $th.siblings().removeClass('sorted ascending');
-      $th.toggleClass('ascending');
+    switchSearchTemplate: function(event) {
+      var $selectedOption = this.$(event.target).find('option:selected');
+      this.switchTo( $selectedOption.data('type') + '-search' );
+      this.activate();
+    },
+
+    generateUrl: function() {
+      var type = this.$('select.rules').find('option:selected').data('type');
+      var includeInactive = this.$('.check.status').is(':checked');
+
+      var url = BASE_URL + type;
+      if (!includeInactive) url += '/active';
+      url += '.json';
+
+      return url;
+    },
+
+    startSearch: function() {
+      if ( this.$('.filter:checked').length < 1 ) {
+        services.notify("Please check at least one filter's checkbox.", 'alert');
+      } else {
+        this.$('.results table').show();
+        this.$('.results tbody').empty();
+        this.$('.results th').removeClass('sorted ascending');
+        this.stopped = false;
+        this.$('.icon-loading-spinner').css('display', 'inline-block');
+        this.$('.stop.btn').show();
+        this.$('.count').text('');
+        this.$('.results ul').empty();
+        this.$('form *:not(.stop)').prop('disabled', true);
+
+        this.ajax( 'requestRules', this.generateUrl() );
+      }
+      return false;
+    },
+
+    stopSearch: function() {
+      this.stopped = true;
+    },
+
+    finishSearch: function() {
+      this.$('form *').prop('disabled', false);
+      this.$('.stop.btn').hide();
+      this.stopped = true;
+      this.$('.icon-loading-spinner').hide();
+    },
+
+    filterResults: function(data) {
+      var type = this.$('select.rules').find('option:selected').data('type');
+      var results = data[type];
+
+      // Pass results through each selected filter
+      _.each(this.$('.filter:checked'), function(filterCheck) {
+        var filterType = this.$(filterCheck).data('filter');
+        results = this.filterBy[filterType](results);
+      }.bind(this) );
+
+      // Remove times from dates
+      _.each(results, function(macro) {
+        macro.created_at = macro.created_at.substring(0,10);
+        macro.updated_at = macro.updated_at.substring(0,10);
+      });
+
+      this.displayResults(results);
+
+      // Get additional pages of api request results
+      if (data.next_page && !this.stopped){
+        this.ajax('requestRules', data.next_page);
+      } else {
+        this.finishSearch();
+      }
+    },
+
+    displayResults: function (results) {
+      var resultsTemplate = this.renderTemplate('results', {results: results} );
+      this.$('.results tbody').append(resultsTemplate);
+
+      // Display result count
+      this.$('.count').html("Displaying " + this.$('.results tbody tr').length + " results");
     },
 
     // Toggles acending/decending order of the column header clicked
@@ -59,178 +133,118 @@
       this.$('.icon-loading-spinner').hide();
     },
 
-    startSearch: function() {
-      if ( this.$('.search-options .check:checked').length < 1 ) {
-        services.notify("Please check at least one condition's checkbox.", 'alert');
-      } else {
-        this.$('.results table').show();
-        this.$('.results tbody').empty();
-        this.$('.results th').removeClass('sorted ascending');
-        this.stopped = false;
-        this.$('.icon-loading-spinner').css('display', 'inline-block');
-        this.$('.stop.btn').show();
-        this.$('.count').text('');
-        this.$('.results ul').empty();
-        this.$('.search.btn').prop('disabled', true);
-        this.$('.query').prop('disabled', true);
-        this.$('.search.btn').prop('value', 'Searching...');
-        this.ajax('requestMacros');
-      }
-      return false;
+    beforeSort: function(event) {
+      this.$('.icon-loading-spinner').css('display', 'inline-block');
+      var $th = this.$(event.target);
+      $th.addClass('sorted');
+      $th.siblings().removeClass('sorted ascending');
+      $th.toggleClass('ascending');
     },
 
-    stopSearch: function() {
-      this.stopped = true;
-    },
+    filterBy: {
+      tag: function(items) {
+        var query = this._getStringQuery('tag');
+        var results = _.filter(items, function(item) {
+          // Filter out tags which don't match query
+          var tags = _.filter(this._getValues(item), function(tag) {
+            return tag.indexOf(query) > -1;
+          });
+          if ( tags.length > 0 ) return item;
+        }.bind(this) );
 
-    finishSearch: function() {
-      this.$('.search.btn').prop('disabled', false);
-      this.$('.query').prop('disabled', false);
-      this.$('.search.btn').prop('value', 'Search');
-      this.$('.stop.btn').hide();
-      this.stopped = true;
-      this.$('.icon-loading-spinner').hide();
-    },
+        return results;
+      },
 
-    filterResults: function(data) {
-      var results = data.macros;
+      comment: function(items) {
+        var query = this._getStringQuery('comment');
+        var results = _.filter(items, function(item) {
+          // Filter out comments which don't match query
+          var comments = _.filter(this._getComments(item), function(comment) {
+            return comment.indexOf(query) > -1;
+          });
+          if ( comments.length > 0 ) return item;
+        }.bind(this) );
 
-      if ( this.$('.check.tag').is(':checked') ) {
-        results = this.filterTagResults(results);
-      }
-      if ( this.$('.check.comment').is(':checked') ) {
-        results = this.filterCommentResults(results);
-      }
-      if ( this.$('.check.created').is(':checked') ) {
-        results = this.filterByCreatedDate(results);
-      }
-      if ( this.$('.check.updated').is(':checked') ) {
-        results = this.filterByUpdatedDate(results);
-      }
-      if ( !this.$('.check.status').is(':checked') ) {
-        results = _.filter(results, function(macro) { return macro.active === true; });
-      }
+        return results;
+      },
 
-      // Remove times from dates
-      _.each(results, function(macro) {
-        macro.created_at = macro.created_at.substring(0,10);
-        macro.updated_at = macro.updated_at.substring(0,10);
-      });
+      note: function(triggers) {
+        var query = this._getStringQuery('note');
+        var results = _.filter(triggers, function(trigger) {
+          // Filter out notifications which don't match query
+          var notifications = _.filter(this._getNotifications(trigger), function(notification) {
+            return notification.indexOf(query) > -1;
+          });
+          if ( notifications.length > 0 ) return trigger;
+        }.bind(this) );
 
-      this.displayResults(results);
+        return results;
+      },
 
-      // Get additional pages of api request results
-      if (data.next_page && !this.stopped){
-        this.ajax('requestMacros', data.next_page);
-      } else {
-        this.finishSearch();
-      }
-    },
+      updated: function(items) {
+        var startDate = this._getStartDateQuery('updated');
+        var endDate = this._getEndDateQuery('updated');
+        var results = _.filter(items, function(item) {
+          var updatedDate = new Date(item.updated_at);
+          if ( updatedDate > startDate && updatedDate < endDate) {
+            return item;
+          }
+        });
 
-    filterTagResults: function(macros) {
-      var results = [];
-      var query = this.$('.query.tag').val().toLowerCase();
+        return results;
+      },
 
-      _.each(macros, function(macro) {
-        var tags = this.getValues(macro);
-        // Filter our tags which don't match query
-        tags = _.filter(tags, function(tag) { return tag.indexOf(query) > -1; });
-        if ( tags.length > 0 ) {
-          results.push(macro);
-        }
-      }.bind(this) );
+      created: function(items) {
+        var startDate = this._getStartDateQuery('created');
+        var endDate = this._getEndDateQuery('created');
+        var results = _.filter(items, function(item) {
+          var createdDate = new Date(item.created_at);
+          if ( createdDate > startDate && createdDate < endDate) {
+            return item;
+          }
+        });
 
-      return results;
-    },
+        return results;
+      },
 
-    filterCommentResults: function(macros) {
-      var results = [];
-      var query = this.$('.query.comment').val().toLowerCase();
+      _getValues: function(macro) {
+        var values = _.pluck(macro.actions, 'value');
+        // Remove null values
+        return _.reject(values, function(value) { return !value; });
+      },
 
-      _.each(macros, function(macro) {
-        var comments = this.getComments(macro);
-        // Filter our comments which don't match query
-        comments = _.filter(comments, function(comment) { return comment.indexOf(query) > -1; });
-        if ( comments.length > 0 ) {
-          results.push(macro);
-        }
-      }.bind(this) );
+      _getComments: function(macro) {
+        var actions = _.filter(macro.actions, function(action) {
+          return action.value && action.field == "comment_value";
+        });
+        var comments = _.map(actions, function(action) {
+          return action.value[1].toLowerCase();
+        });
+        return comments;
+      },
 
-      return results;
-    },
+      _getNotifications: function(trigger) {
+        var actions = _.filter(trigger.actions, function(action) {
+          return action.value && action.field.indexOf("notification") > -1;
+        });
+        var notifications = _.map(actions, function(action) {
+          return action.value[action.value.length - 1].toLowerCase();
+        });
+        return notifications;
+      },
 
-    filterByUpdatedDate: function(macros) {
-      var results = [];
-      var startDate = new Date( this.$('.query.updated.start-date').val() );
-      var endDate = new Date( this.$('.query.updated.end-date').val() );
+      _getStringQuery: function(type) {
+        return this.$('.query.' + type).val().toLowerCase();
+      }.bind(this),
 
-      _.each(macros, function(macro) {
-        var updatedDate = new Date(macro.updated_at);
-        if ( updatedDate > startDate && updatedDate < endDate) {
-          results.push(macro);
-        }
-      });
+      _getStartDateQuery: function(type) {
+        return new Date( this.$('.query.' + type + '.start-date').val().toLowerCase() );
+      }.bind(this),
 
-      return results;
-    },
-
-    filterByCreatedDate: function(macros) {
-      var results = [];
-      var startDate = new Date( this.$('.query.created.start-date').val() );
-      var endDate = new Date( this.$('.query.created.end-date').val() );
-
-      _.each(macros, function(macro) {
-        var createdDate = new Date(macro.created_at);
-        if ( createdDate > startDate && createdDate < endDate) {
-          results.push(macro);
-        }
-      });
-
-      return results;
-    },
-
-    displayResults: function (results) {
-      // Render the template
-      var resultsTemplate = this.renderTemplate('results', {results: results} );
-
-      // Insert rendered template into the results div
-      this.$('.results tbody').append(resultsTemplate);
-
-      // Display result count
-      this.$('.count').html("Displaying " + this.$('.results tbody tr').length + " results");
-
-    },
-
-    // Helpers
-
-    getMacroActions: function(macro) {
-      var actions = [];
-      _.each(macro.actions, function(action) {
-        actions.push(action);
-      });
-      return actions;
-    },
-
-    getValues: function(macro) {
-      var actions = this.getMacroActions(macro);
-      var values = [];
-      _.each(actions, function(action) {
-        if (action.value) { values.push(action.value); }
-      });
-      return values;
-    },
-
-    getComments: function(macro) {
-      var actions = this.getMacroActions(macro);
-      var comments = [];
-      _.each(actions, function(action) {
-        if (action.value && action.field == "comment_value") {
-          comments.push( action.value[1].toLowerCase() );
-        }
-      });
-      return comments;
+      _getEndDateQuery: function(type) {
+        return new Date( this.$('.query.' + type + '.end-date').val().toLowerCase() );
+      }.bind(this),
     }
-
   };
 
 }());
