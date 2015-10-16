@@ -89,8 +89,7 @@
         this.$('.stop.btn').show();
         this.$('.count').text('');
         this.$('.results ul').empty();
-        this.$('.search.btn').prop('disabled', true);
-        this.$('.query').prop('disabled', true);
+        this.$('form *:not(.stop)').prop('disabled', true);
 
         this.ajax( 'requestRules', this.generateUrl() );
       }
@@ -102,8 +101,7 @@
     },
 
     finishSearch: function() {
-      this.$('.search.btn').prop('disabled', false);
-      this.$('.query').prop('disabled', false);
+      this.$('form *').prop('disabled', false);
       this.$('.stop.btn').hide();
       this.stopped = true;
       this.$('.icon-loading-spinner').hide();
