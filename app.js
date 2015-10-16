@@ -41,10 +41,10 @@
 
     generateUrl: function() {
       var type = this.$('select.rules').find('option:selected').data('type');
-      var onlyActive = !this.$('.check.status').is(':checked');
+      var includeInactive = this.$('.check.status').is(':checked');
 
       var url = BASE_URL + type;
-      if (onlyActive) url += '/active';
+      if (!includeInactive) url += '/active';
       url += '.json';
 
       return url;
