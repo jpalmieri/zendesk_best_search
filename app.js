@@ -1,6 +1,6 @@
 (function() {
 
-  BASE_URL = '/api/v2/';
+  var BASE_URL = '/api/v2/';
 
   return {
     events: {
@@ -78,8 +78,8 @@
     },
 
     startSearch: function() {
-      if ( this.$('.search-options .check:checked').length < 1 ) {
-        services.notify("Please check at least one condition's checkbox.", 'alert');
+      if ( this.$('.filter:checked').length < 1 ) {
+        services.notify("Please check at least one filter's checkbox.", 'alert');
       } else {
         this.$('.results table').show();
         this.$('.results tbody').empty();
@@ -113,21 +113,11 @@
       var type = this.$('select.rules').find('option:selected').data('type');
       var results = data[type];
 
-      if ( this.$('.check.tag').is(':checked') ) {
-        results = this.filter.byTag(results);
-      }
-      if ( this.$('.check.comment').is(':checked') ) {
-        results = this.filter.byComment(results);
-      }
-      if ( this.$('.check.note').is(':checked') ) {
-        results = this.filter.byNote(results);
-      }
-      if ( this.$('.check.created').is(':checked') ) {
-        results = this.filter.byCreatedDate(results);
-      }
-      if ( this.$('.check.updated').is(':checked') ) {
-        results = this.filter.byUpdatedDate(results);
-      }
+      // Pass results through each selected filter
+      _.each(this.$('.filter:checked'), function(filterCheck) {
+        var filterType = this.$(filterCheck).data('filter');
+        results = this.filterBy[filterType](results);
+      }.bind(this) );
 
       // Remove times from dates
       _.each(results, function(macro) {
@@ -146,8 +136,8 @@
     },
 
 
-    filter: {
-      byTag: function(items) {
+    filterBy: {
+      tag: function(items) {
         var query = this._getStringQuery('tag');
         var results = _.filter(items, function(item) {
           // Filter out tags which don't match query
@@ -160,7 +150,7 @@
         return results;
       },
 
-      byComment: function(items) {
+      comment: function(items) {
         var query = this._getStringQuery('comment');
         var results = _.filter(items, function(item) {
           // Filter out comments which don't match query
@@ -173,7 +163,7 @@
         return results;
       },
 
-      byNote: function(triggers) {
+      note: function(triggers) {
         var query = this._getStringQuery('note');
         var results = _.filter(triggers, function(trigger) {
           // Filter out notifications which don't match query
@@ -186,7 +176,7 @@
         return results;
       },
 
-      byUpdatedDate: function(items) {
+      updated: function(items) {
         var startDate = this._getStartDateQuery('updated');
         var endDate = this._getEndDateQuery('updated');
         var results = _.filter(items, function(item) {
@@ -199,7 +189,7 @@
         return results;
       },
 
-      byCreatedDate: function(items) {
+      created: function(items) {
         var startDate = this._getStartDateQuery('created');
         var endDate = this._getEndDateQuery('created');
         var results = _.filter(items, function(item) {
