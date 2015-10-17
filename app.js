@@ -149,6 +149,13 @@
     },
 
     filterBy: {
+      title: function(items) {
+        var query = this._getStringQuery('title');
+        return _.filter(items, function(item) {
+          return item.title.indexOf(query) > -1;
+        });
+      },
+
       tag: function(items) {
         var query = this._getStringQuery('tag');
         var results = _.filter(items, function(item) {
