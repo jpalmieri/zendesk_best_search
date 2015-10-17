@@ -29,3 +29,7 @@ input.stop.btn, .icon-loading-spinner {
 .results th {
   cursor: pointer;
 }
+
+form td:nth-child(2) {
+  cursor: pointer;
+}

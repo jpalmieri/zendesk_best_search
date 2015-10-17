@@ -2,15 +2,15 @@
   <tbody>
     <tr>
       <td><input type='checkbox' class='filter tag' data-filter='tag' /></td>
-      <td>Includes</td>
+      <td>Tags include</td>
       <td><input type='text' class='query tag' /></td>
-      <td>in tags</td>
+      <td></td>
     </tr>
     <tr>
       <td><input type='checkbox' class='filter comment' data-filter='comment' /></td>
-      <td>Includes</td>
+      <td>Comments include</td>
       <td><input type='text' class='query comment' /></td>
-      <td>in comments</td>
+      <td></td>
     </tr>
     <tr>
       <td><input type='checkbox' class='filter created'  data-filter='created' /></td>
