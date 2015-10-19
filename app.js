@@ -11,7 +11,8 @@
       'click .stop.btn':                    'stopSearch',
       'mousedown .results th':              'beforeSort',
       'mouseup .results th':                'sortTable',
-      'change select.rules':                'switchSearchTemplate'
+      'change select.rules':                'switchSearchTemplate',
+      'click form td:nth-child(2)':         'toggleCorrespondingFilter'
     },
 
     requests: {
@@ -139,6 +140,12 @@
       $th.addClass('sorted');
       $th.siblings().removeClass('sorted ascending');
       $th.toggleClass('ascending');
+    },
+
+    toggleCorrespondingFilter: function(event) {
+      // Toggles filter when associated label is clicked
+      var $filter = this.$(event.target).siblings().find('.filter');
+      $filter.prop( 'checked', !$filter.prop('checked') );
     },
 
     filterBy: {
