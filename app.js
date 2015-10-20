@@ -152,7 +152,7 @@
       title: function(items) {
         var query = this._getStringQuery('title');
         return _.filter(items, function(item) {
-          return item.title.indexOf(query) > -1;
+          return item.title.match(query);
         });
       },
 
@@ -161,7 +161,7 @@
         var results = _.filter(items, function(item) {
           // Filter out tags which don't match query
           var tags = _.filter(this._getTagValues(item), function(tag) {
-            return tag.indexOf(query) > -1;
+            return tag.match(query);
           });
           if ( tags.length > 0 ) return item;
         }.bind(this) );
@@ -174,7 +174,7 @@
         var results = _.filter(items, function(item) {
           // Filter out comments which don't match query
           var comments = _.filter(this._getComments(item), function(comment) {
-            return comment.indexOf(query) > -1;
+            return comment.match(query);
           });
           if ( comments.length > 0 ) return item;
         }.bind(this) );
@@ -187,7 +187,7 @@
         var results = _.filter(triggers, function(trigger) {
           // Filter out notifications which don't match query
           var notifications = _.filter(this._getNotifications(trigger), function(notification) {
-            return notification.indexOf(query) > -1;
+            return notification.match(query);
           });
           if ( notifications.length > 0 ) return trigger;
         }.bind(this) );
@@ -252,7 +252,7 @@
       },
 
       _getStringQuery: function(type) {
-        return this.$('.query.' + type).val().toLowerCase();
+        return new RegExp(this.$('.query.' + type).val(), 'i');
       }.bind(this),
 
       _getStartDateQuery: function(type) {
