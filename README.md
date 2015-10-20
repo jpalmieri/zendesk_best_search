@@ -1,12 +1,12 @@
 # Zendesk Best Search
 
-A Zendesk navbar app which allows you to search for macros and triggers using the Zendesk API.
+A Zendesk navbar app which allows you to search for macros, triggers and automations using the Zendesk API.
 
 ### Filter by:
 
 * Tag
 * Comment (macros only)
-* Notifications (triggers only)
+* Notifications (triggers and automations only)
 * Created date
 * Updated date
 
