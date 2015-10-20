@@ -6,6 +6,7 @@
   <select class='rules'>
     <option data-type="macros">Macros</option>
     <option data-type="triggers">Triggers</option>
+    <option data-type="automations">Automations</option>
   </select>
 
       <section data-main />
