@@ -160,7 +160,7 @@
         var query = this._getStringQuery('tag');
         var results = _.filter(items, function(item) {
           // Filter out tags which don't match query
-          var tags = _.filter(this._getValues(item), function(tag) {
+          var tags = _.filter(this._getTagValues(item), function(tag) {
             return tag.indexOf(query) > -1;
           });
           if ( tags.length > 0 ) return item;
@@ -221,8 +221,12 @@
         return results;
       },
 
-      _getValues: function(macro) {
-        var values = _.pluck(macro.actions, 'value');
+      _getTagValues: function(item) {
+        var tagActions = _.filter(item.actions, function(action) {
+          return action.field.indexOf('_tags') > -1 ||
+                 action.field.indexOf('custom_fields_') > -1;
+        });
+        var values = _.pluck(tagActions, 'value');
         // Remove null values
         return _.reject(values, function(value) { return !value; });
       },
