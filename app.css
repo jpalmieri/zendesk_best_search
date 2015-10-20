@@ -2,6 +2,14 @@ form {
   width: 550px;
 }
 
+select.rules {
+  margin-bottom: 10px;
+}
+
+table.search-options {
+  margin-bottom: 10px;
+}
+
 .table td {
   border: 0;
 }
