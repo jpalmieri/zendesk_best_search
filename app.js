@@ -26,17 +26,20 @@
     },
 
     initialize: function() {
-      this.switchTo('macros-search');
       this.stopped = true;
     },
 
     activate: function() {
+      var $selectedOption = this.$('select.rules').find('option:selected');
+      var searchFormHtml = this.renderSearchForm(this.searchForms[ $selectedOption.data('type') ]);
+      this.$('section[data-main]').html(searchFormHtml);
       this.$('.query.date').datepicker({ dateFormat: "yy-mm-dd" });
     },
 
-    switchSearchTemplate: function(event) {
-      var $selectedOption = this.$(event.target).find('option:selected');
-      this.switchTo( $selectedOption.data('type') + '-search' );
+    switchSearchTemplate: function() {
+      var $selectedOption = this.$('select.rules').find('option:selected');
+      var searchFormHtml = this.renderSearchForm(this.searchForms[ $selectedOption.data('type') ]);
+      this.$('section[data-main]').html(searchFormHtml);
       this.activate();
     },
 
@@ -262,6 +265,39 @@
       _getEndDateQuery: function(type) {
         return new Date( this.$('.query.' + type + '.end-date').val().toLowerCase() );
       }.bind(this),
+    },
+
+    renderSearchForm: function(options) {
+      var rows = _.map(options, function(row) {
+        return this.renderTemplate('search-form-row-' + row.inputType, row);
+      }.bind(this) );
+      return this.renderTemplate('search-form-template', {rows: rows} );
+    },
+
+    searchForms: {
+      macros: {
+        row1: {inputType: 'text', filterType: 'title', label: 'Title includes'},
+        row2: {inputType: 'text', filterType: 'tag', label: 'Tag includes'},
+        row3: {inputType: 'text', filterType: 'comment', label: 'Comment includes'},
+        row4: {inputType: 'date', filterType: 'created', label: 'Created between'},
+        row5: {inputType: 'date', filterType: 'updated', label: 'Updated between'}
+      },
+
+      triggers: {
+        row1: {inputType: 'text', filterType: 'title', label: 'Title includes'},
+        row2: {inputType: 'text', filterType: 'tag', label: 'Tag includes'},
+        row3: {inputType: 'text', filterType: 'note', label: 'Notification includes'},
+        row4: {inputType: 'date', filterType: 'created', label: 'Created between'},
+        row5: {inputType: 'date', filterType: 'updated', label: 'Updated between'}
+      },
+
+      automations: {
+        row1: {inputType: 'text', filterType: 'title', label: 'Title includes'},
+        row2: {inputType: 'text', filterType: 'tag', label: 'Tag includes'},
+        row3: {inputType: 'text', filterType: 'note', label: 'Notification includes'},
+        row4: {inputType: 'date', filterType: 'created', label: 'Created between'},
+        row5: {inputType: 'date', filterType: 'updated', label: 'Updated between'}
+      }
     }
   };
 

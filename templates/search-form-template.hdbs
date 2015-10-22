@@ -1,0 +1,7 @@
+<table class='table search-options'>
+  <tbody>
+    {{#each rows}}
+      {{{this}}}
+    {{/each}}
+  </tbody>
+</table>
