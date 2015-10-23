@@ -12,7 +12,9 @@
       'mousedown .results th':              'beforeSort',
       'mouseup .results th':                'sortTable',
       'change select.rules':                'switchSearchTemplate',
-      'click form td:nth-child(2)':         'toggleCorrespondingFilter'
+      'click form td:nth-child(2)':         'toggleCorrespondingFilter',
+      'change .query':                      'handleChangedQuery',
+      'keyup .query':                       'handleChangedQuery'
     },
 
     requests: {
@@ -53,6 +55,17 @@
       url += '.json';
 
       return url;
+    },
+
+    handleChangedQuery: function() {
+      var atLeastOneQueryHasText = _.some(this.$('.query'), function(queryInput) {
+        return this.$(queryInput).val();
+      }.bind(this) );
+      if ( atLeastOneQueryHasText ) {
+        this.$('.search.btn').prop('disabled', false);
+      } else {
+        this.$('.search.btn').prop('disabled', true);
+      }
     },
 
     startSearch: function() {
