@@ -8,6 +8,9 @@
 
 <input type="submit" value="Search" class="search btn" />
 <input type="button" value="Stop" class="stop btn" />
-<label class='checkbox pull-right'>
-  <input type='checkbox' class="check status" /> Include inactive {{searchType}}
+<label class='checkbox pull-right inactive-checkbox'>
+  <input type='checkbox' class="check status" /> Include inactive {{searchType}}s
 </label>
+<div class='new-item-link'>
+  <a href='/rules/new?filter={{searchType}}' target='_blank'>Create new {{searchType}}</a>
+</div>

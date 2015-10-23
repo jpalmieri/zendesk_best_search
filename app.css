@@ -55,3 +55,11 @@ a.edit-this {
     color: green;
     font-weight: bold;
 }
+
+.new-item-link {
+  margin-top: 10px;
+}
+
+label.inactive-checkbox {
+  padding: 10px 11px;
+}

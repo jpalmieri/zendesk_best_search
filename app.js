@@ -45,7 +45,7 @@
     },
 
     generateUrl: function() {
-      var type = this.$('select.rules').find('option:selected').data('type');
+      var type = this.$('select.rules').find('option:selected').data('type') + 's';
       var includeInactive = this.$('.check.status').is(':checked');
 
       var url = BASE_URL + type;
@@ -86,7 +86,7 @@
     },
 
     filterResults: function(data) {
-      var type = this.$('select.rules').find('option:selected').data('type');
+      var type = this.$('select.rules').find('option:selected').data('type') + 's';
       var results = data[type];
 
       // Pass results through each selected filter
@@ -276,7 +276,7 @@
     },
 
     searchForms: {
-      macros: {
+      macro: {
         row1: {inputType: 'text', filterType: 'title', label: 'Title includes'},
         row2: {inputType: 'text', filterType: 'tag', label: 'Tag includes'},
         row3: {inputType: 'text', filterType: 'comment', label: 'Comment includes'},
@@ -284,7 +284,7 @@
         row5: {inputType: 'date', filterType: 'updated', label: 'Updated between'}
       },
 
-      triggers: {
+      trigger: {
         row1: {inputType: 'text', filterType: 'title', label: 'Title includes'},
         row2: {inputType: 'text', filterType: 'tag', label: 'Tag includes'},
         row3: {inputType: 'text', filterType: 'note', label: 'Notification includes'},
@@ -292,7 +292,7 @@
         row5: {inputType: 'date', filterType: 'updated', label: 'Updated between'}
       },
 
-      automations: {
+      automation: {
         row1: {inputType: 'text', filterType: 'title', label: 'Title includes'},
         row2: {inputType: 'text', filterType: 'tag', label: 'Tag includes'},
         row3: {inputType: 'text', filterType: 'note', label: 'Notification includes'},

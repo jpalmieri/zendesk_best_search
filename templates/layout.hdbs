@@ -4,9 +4,9 @@
 
 <form action="" method="POST" class='well'>
   <select class='rules'>
-    <option data-type="macros">Macros</option>
-    <option data-type="triggers">Triggers</option>
-    <option data-type="automations">Automations</option>
+    <option data-type="macro">Macros</option>
+    <option data-type="trigger">Triggers</option>
+    <option data-type="automation">Automations</option>
   </select>
 
     <section data-main />
