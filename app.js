@@ -27,20 +27,21 @@
 
     initialize: function() {
       this.stopped = true;
+      this.initialized = true;
     },
 
     activate: function() {
-      var $selectedOption = this.$('select.rules').find('option:selected');
-      var searchFormHtml = this.renderSearchForm(this.searchForms[ $selectedOption.data('type') ]);
-      this.$('section[data-main]').html(searchFormHtml);
-      this.$('.query.date').datepicker({ dateFormat: "yy-mm-dd" });
+      if (this.initialized) {
+        this.switchSearchTemplate();
+        this.initialized = false;
+      }
     },
 
     switchSearchTemplate: function() {
       var $selectedOption = this.$('select.rules').find('option:selected');
       var searchFormHtml = this.renderSearchForm(this.searchForms[ $selectedOption.data('type') ]);
       this.$('section[data-main]').html(searchFormHtml);
-      this.activate();
+      this.$('.query.date').datepicker({ dateFormat: "yy-mm-dd" });
     },
 
     generateUrl: function() {
