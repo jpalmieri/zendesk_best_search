@@ -9,13 +9,8 @@
     <option data-type="automations">Automations</option>
   </select>
 
-      <section data-main />
+    <section data-main />
 
-  <input type="submit" value="Search" class="search btn" />
-  <input type="button" value="Stop" class="stop btn" />
-  <label class='checkbox pull-right'>
-    <input type='checkbox' class="check status" /> Inlcude inactive items
-  </label>
 </form>
 
 <div class="results">

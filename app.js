@@ -38,8 +38,8 @@
     },
 
     switchSearchTemplate: function() {
-      var $selectedOption = this.$('select.rules').find('option:selected');
-      var searchFormHtml = this.renderSearchForm(this.searchForms[ $selectedOption.data('type') ]);
+      var searchType = this.$('select.rules').find('option:selected').data('type');
+      var searchFormHtml = this.renderSearchForm(this.searchForms[searchType], searchType);
       this.$('section[data-main]').html(searchFormHtml);
       this.$('.query.date').datepicker({ dateFormat: "yy-mm-dd" });
     },
@@ -268,11 +268,11 @@
       }.bind(this),
     },
 
-    renderSearchForm: function(options) {
+    renderSearchForm: function(options, searchType) {
       var rows = _.map(options, function(row) {
         return this.renderTemplate('search-form-row-' + row.inputType, row);
       }.bind(this) );
-      return this.renderTemplate('search-form-template', {rows: rows} );
+      return this.renderTemplate('search-form-template', {rows: rows, searchType: searchType} );
     },
 
     searchForms: {
