@@ -149,12 +149,19 @@
     },
 
     filterBy: {
+      title: function(items) {
+        var query = this._getStringQuery('title');
+        return _.filter(items, function(item) {
+          return item.title.match(query);
+        });
+      },
+
       tag: function(items) {
         var query = this._getStringQuery('tag');
         var results = _.filter(items, function(item) {
           // Filter out tags which don't match query
-          var tags = _.filter(this._getValues(item), function(tag) {
-            return tag.indexOf(query) > -1;
+          var tags = _.filter(this._getTagValues(item), function(tag) {
+            return tag.match(query);
           });
           if ( tags.length > 0 ) return item;
         }.bind(this) );
@@ -167,7 +174,7 @@
         var results = _.filter(items, function(item) {
           // Filter out comments which don't match query
           var comments = _.filter(this._getComments(item), function(comment) {
-            return comment.indexOf(query) > -1;
+            return comment.match(query);
           });
           if ( comments.length > 0 ) return item;
         }.bind(this) );
@@ -180,7 +187,7 @@
         var results = _.filter(triggers, function(trigger) {
           // Filter out notifications which don't match query
           var notifications = _.filter(this._getNotifications(trigger), function(notification) {
-            return notification.indexOf(query) > -1;
+            return notification.match(query);
           });
           if ( notifications.length > 0 ) return trigger;
         }.bind(this) );
@@ -214,8 +221,12 @@
         return results;
       },
 
-      _getValues: function(macro) {
-        var values = _.pluck(macro.actions, 'value');
+      _getTagValues: function(item) {
+        var tagActions = _.filter(item.actions, function(action) {
+          return action.field.indexOf('_tags') > -1 ||
+                 action.field.indexOf('custom_fields_') > -1;
+        });
+        var values = _.pluck(tagActions, 'value');
         // Remove null values
         return _.reject(values, function(value) { return !value; });
       },
@@ -241,7 +252,7 @@
       },
 
       _getStringQuery: function(type) {
-        return this.$('.query.' + type).val().toLowerCase();
+        return new RegExp(this.$('.query.' + type).val(), 'i');
       }.bind(this),
 
       _getStartDateQuery: function(type) {

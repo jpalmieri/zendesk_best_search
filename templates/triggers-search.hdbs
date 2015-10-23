@@ -1,6 +1,12 @@
 <table class='table search-options'>
   <tbody>
     <tr>
+      <td><input type='checkbox' class='filter title' data-filter='title' /></td>
+      <td>Title includes</td>
+      <td><input type='text' class='query title' /></td>
+      <td></td>
+    </tr>
+    <tr>
       <td><input type='checkbox' class='filter tag' data-filter='tag' /></td>
       <td>Tags include</td>
       <td><input type='text' class='query tag' /></td>
