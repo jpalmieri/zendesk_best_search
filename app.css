@@ -38,6 +38,20 @@ input.stop.btn, .icon-loading-spinner {
   cursor: pointer;
 }
 
+.results td:nth-child(2), .results td:nth-child(3), .results td:nth-child(4) {
+  min-width: 80px;
+}
+
 form td:nth-child(2) {
   cursor: pointer;
+}
+
+span.delim {
+    margin: 0 5px;
+    color: #BBB;
+}
+
+a.edit-this {
+    color: green;
+    font-weight: bold;
 }

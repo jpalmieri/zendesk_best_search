@@ -5,6 +5,7 @@
       <td>Title includes</td>
       <td><input type='text' class='query title' /></td>
       <td></td>
+      <td><a href='/rules/new?filter=automation' target='_blank' type='button' class='btn'>New automation</a></td>
     </tr>
     <tr>
       <td><input type='checkbox' class='filter tag' data-filter='tag' /></td>

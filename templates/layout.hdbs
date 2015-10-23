@@ -26,6 +26,7 @@
   <thead>
     <tr>
       <th>Title</th>
+      <th></th>
       <th>Created on</th>
       <th>Last updated</th>
       <th>Status</th>

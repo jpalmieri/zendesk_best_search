@@ -1,7 +1,18 @@
 {{#each results}}
   {{#if this}}
     <tr>
-      <td><a href="/rules/{{this.id}}/edit" target="_blank">{{this.title}}</a></td>
+      <td>
+        {{this.title}}
+      </td>
+      <td>
+        <a href="/rules/new?copy_id={{this.id}}&filter={{../../type}}" target="_blank">
+          clone
+        </a>
+        <span class="delim">|</span>
+        <a href="/rules/{{this.id}}/edit" target="_blank" class='edit-this'>
+          edit
+        </a>
+      </td>
       <td>{{this.created_at}}</td>
       <td>{{this.updated_at}}</td>
       {{#if this.active}}

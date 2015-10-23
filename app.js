@@ -97,7 +97,7 @@
         macro.updated_at = macro.updated_at.substring(0,10);
       });
 
-      this.displayResults(results);
+      this.displayResults(results, type);
 
       // Get additional pages of api request results
       if (data.next_page && !this.stopped){
@@ -107,8 +107,8 @@
       }
     },
 
-    displayResults: function (results) {
-      var resultsTemplate = this.renderTemplate('results', {results: results} );
+    displayResults: function (results, type) {
+      var resultsTemplate = this.renderTemplate('results', {results: results, type: type} );
       this.$('.results tbody').append(resultsTemplate);
 
       // Display result count
