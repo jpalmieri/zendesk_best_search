@@ -69,21 +69,17 @@
     },
 
     startSearch: function() {
-      if ( this.$('.filter:checked').length < 1 ) {
-        services.notify("Please check at least one filter's checkbox.", 'alert');
-      } else {
-        this.$('.results table').show();
-        this.$('.results tbody').empty();
-        this.$('.results th').removeClass('sorted ascending');
-        this.stopped = false;
-        this.$('.icon-loading-spinner').css('display', 'inline-block');
-        this.$('.stop.btn').show();
-        this.$('.count').text('');
-        this.$('.results ul').empty();
-        this.$('form *:not(.stop)').prop('disabled', true);
+      this.$('.results table').show();
+      this.$('.results tbody').empty();
+      this.$('.results th').removeClass('sorted ascending');
+      this.stopped = false;
+      this.$('.icon-loading-spinner').css('display', 'inline-block');
+      this.$('.stop.btn').show();
+      this.$('.count').text('');
+      this.$('.results ul').empty();
+      this.$('form *:not(.stop)').prop('disabled', true);
 
-        this.ajax( 'requestRules', this.generateUrl() );
-      }
+      this.ajax( 'requestRules', this.generateUrl() );
       return false;
     },
 
@@ -103,9 +99,11 @@
       var results = data[type];
 
       // Pass results through each selected filter
-      _.each(this.$('.filter:checked'), function(filterCheck) {
-        var filterType = this.$(filterCheck).data('filter');
-        results = this.filterBy[filterType](results);
+      _.each(this.$('.query'), function(query) {
+        if ( this.$(query).val() ) {
+          var filterType = this.$(query).closest('tr').data('filter');
+          results = this.filterBy[filterType](results);
+        }
       }.bind(this) );
 
       // Remove times from dates
