@@ -63,3 +63,13 @@ a.edit-this {
 label.inactive-checkbox {
   padding: 10px 11px;
 }
+
+.query-clear {
+  position: absolute;
+  right: 18px;
+  top: 0;
+  bottom: 0;
+  height: 14px;
+  margin: auto;
+  display: none;
+}
