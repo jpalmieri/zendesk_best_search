@@ -57,7 +57,7 @@
       return url;
     },
 
-    handleChangedQuery: function() {
+    handleChangedQuery: function(event) {
       var atLeastOneQueryHasText = _.some(this.$('.query'), function(queryInput) {
         return this.$(queryInput).val();
       }.bind(this) );
@@ -65,6 +65,13 @@
         this.$('.search.btn').prop('disabled', false);
       } else {
         this.$('.search.btn').prop('disabled', true);
+      }
+
+      // Show 'x' to clear input
+      if ( this.$(event.target).val() ) {
+        this.$(event.target).siblings('.query-clear').show();
+      } else {
+        this.$(event.target).siblings('.query-clear').hide();
       }
     },
 
