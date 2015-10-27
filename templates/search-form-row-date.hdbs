@@ -1,7 +1,16 @@
-<tr>
-  <td><input type='checkbox' class='filter {{filterType}}'  data-filter='{{filterType}}' /></td>
+<tr data-filter='{{filterType}}'>
   <td>{{label}}</td>
-  <td><input type='text' class='query date {{filterType}} start-date' /></td>
+  <td>
+    <div class='btn-group'>
+      <input type='text' class='query date {{filterType}} start-date' />
+      <span class="icon-remove query-clear" />
+    </div>
+  </td>
   <td>and</td>
-  <td><input type='text' class='query date {{filterType}} end-date' /></td>
+  <td>
+    <div class='btn-group'>
+      <input type='text' class='query date {{filterType}} end-date' />
+      <span class="icon-remove query-clear" />
+    </div>
+  </td>
 </tr>

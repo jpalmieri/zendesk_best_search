@@ -12,7 +12,9 @@
       'mousedown .results th':              'beforeSort',
       'mouseup .results th':                'sortTable',
       'change select.rules':                'switchSearchTemplate',
-      'click form td:nth-child(2)':         'toggleCorrespondingFilter'
+      'change .query':                      'handleChangedQuery',
+      'keyup .query':                       'handleChangedQuery',
+      'click .query-clear':                 'clearQuery'
     },
 
     requests: {
@@ -55,22 +57,46 @@
       return url;
     },
 
-    startSearch: function() {
-      if ( this.$('.filter:checked').length < 1 ) {
-        services.notify("Please check at least one filter's checkbox.", 'alert');
-      } else {
-        this.$('.results table').show();
-        this.$('.results tbody').empty();
-        this.$('.results th').removeClass('sorted ascending');
-        this.stopped = false;
-        this.$('.icon-loading-spinner').css('display', 'inline-block');
-        this.$('.stop.btn').show();
-        this.$('.count').text('');
-        this.$('.results ul').empty();
-        this.$('form *:not(.stop)').prop('disabled', true);
+    handleChangedQuery: function(event) {
+      this.toggleSearch();
 
-        this.ajax( 'requestRules', this.generateUrl() );
+      // Show 'x' to clear input
+      if ( this.$(event.target).val() ) {
+        this.$(event.target).siblings('.query-clear').show();
+      } else {
+        this.$(event.target).siblings('.query-clear').hide();
       }
+    },
+
+    toggleSearch: function() {
+      var atLeastOneQueryHasText = _.some(this.$('.query'), function(queryInput) {
+        return this.$(queryInput).val();
+      }.bind(this) );
+      if ( atLeastOneQueryHasText ) {
+        this.$('.search.btn').prop('disabled', false);
+      } else {
+        this.$('.search.btn').prop('disabled', true);
+      }
+    },
+
+    clearQuery: function(event) {
+      this.$(event.target).siblings('.query').val('').select();
+      this.toggleSearch();
+      this.$(event.target).hide();
+    },
+
+    startSearch: function() {
+      this.$('.results table').show();
+      this.$('.results tbody').empty();
+      this.$('.results th').removeClass('sorted ascending');
+      this.stopped = false;
+      this.$('.icon-loading-spinner').css('display', 'inline-block');
+      this.$('.stop.btn').show();
+      this.$('.count').text('');
+      this.$('.results ul').empty();
+      this.$('form *:not(.stop)').prop('disabled', true);
+
+      this.ajax( 'requestRules', this.generateUrl() );
       return false;
     },
 
@@ -90,9 +116,11 @@
       var results = data[type];
 
       // Pass results through each selected filter
-      _.each(this.$('.filter:checked'), function(filterCheck) {
-        var filterType = this.$(filterCheck).data('filter');
-        results = this.filterBy[filterType](results);
+      _.each(this.$('.query'), function(query) {
+        if ( this.$(query).val() ) {
+          var filterType = this.$(query).closest('tr').data('filter');
+          results = this.filterBy[filterType](results);
+        }
       }.bind(this) );
 
       // Remove times from dates
@@ -146,25 +174,19 @@
       $th.toggleClass('ascending');
     },
 
-    toggleCorrespondingFilter: function(event) {
-      // Toggles filter when associated label is clicked
-      var $filter = this.$(event.target).siblings().find('.filter');
-      $filter.prop( 'checked', !$filter.prop('checked') );
-    },
-
     filterBy: {
       title: function(items) {
-        var query = this._getStringQuery('title');
+        var query = this.getStringQuery('title');
         return _.filter(items, function(item) {
           return item.title.match(query);
         });
       },
 
       tag: function(items) {
-        var query = this._getStringQuery('tag');
+        var query = this.getStringQuery('tag');
         var results = _.filter(items, function(item) {
           // Filter out tags which don't match query
-          var tags = _.filter(this._getTagValues(item), function(tag) {
+          var tags = _.filter(this.getTagValues(item), function(tag) {
             return tag.match(query);
           });
           if ( tags.length > 0 ) return item;
@@ -174,10 +196,10 @@
       },
 
       comment: function(items) {
-        var query = this._getStringQuery('comment');
+        var query = this.getStringQuery('comment');
         var results = _.filter(items, function(item) {
           // Filter out comments which don't match query
-          var comments = _.filter(this._getComments(item), function(comment) {
+          var comments = _.filter(this.getComments(item), function(comment) {
             return comment.match(query);
           });
           if ( comments.length > 0 ) return item;
@@ -187,10 +209,10 @@
       },
 
       note: function(triggers) {
-        var query = this._getStringQuery('note');
+        var query = this.getStringQuery('note');
         var results = _.filter(triggers, function(trigger) {
           // Filter out notifications which don't match query
-          var notifications = _.filter(this._getNotifications(trigger), function(notification) {
+          var notifications = _.filter(this.getNotifications(trigger), function(notification) {
             return notification.match(query);
           });
           if ( notifications.length > 0 ) return trigger;
@@ -200,8 +222,8 @@
       },
 
       updated: function(items) {
-        var startDate = this._getStartDateQuery('updated');
-        var endDate = this._getEndDateQuery('updated');
+        var startDate = this.getStartDateQuery('updated');
+        var endDate = this.getEndDateQuery('updated');
         var results = _.filter(items, function(item) {
           var updatedDate = new Date(item.updated_at);
           if ( updatedDate > startDate && updatedDate < endDate) {
@@ -213,8 +235,8 @@
       },
 
       created: function(items) {
-        var startDate = this._getStartDateQuery('created');
-        var endDate = this._getEndDateQuery('created');
+        var startDate = this.getStartDateQuery('created');
+        var endDate = this.getEndDateQuery('created');
         var results = _.filter(items, function(item) {
           var createdDate = new Date(item.created_at);
           if ( createdDate > startDate && createdDate < endDate) {
@@ -225,7 +247,7 @@
         return results;
       },
 
-      _getTagValues: function(item) {
+      getTagValues: function(item) {
         var tagActions = _.filter(item.actions, function(action) {
           return action.field.indexOf('_tags') > -1 ||
                  action.field.indexOf('custom_fields_') > -1;
@@ -235,7 +257,7 @@
         return _.reject(values, function(value) { return !value; });
       },
 
-      _getComments: function(macro) {
+      getComments: function(macro) {
         var actions = _.filter(macro.actions, function(action) {
           return action.value && action.field == "comment_value";
         });
@@ -245,7 +267,7 @@
         return comments;
       },
 
-      _getNotifications: function(trigger) {
+      getNotifications: function(trigger) {
         var actions = _.filter(trigger.actions, function(action) {
           return action.value && action.field.indexOf("notification") > -1;
         });
@@ -255,15 +277,15 @@
         return notifications;
       },
 
-      _getStringQuery: function(type) {
+      getStringQuery: function(type) {
         return new RegExp(this.$('.query.' + type).val(), 'i');
       }.bind(this),
 
-      _getStartDateQuery: function(type) {
+      getStartDateQuery: function(type) {
         return new Date( this.$('.query.' + type + '.start-date').val().toLowerCase() );
       }.bind(this),
 
-      _getEndDateQuery: function(type) {
+      getEndDateQuery: function(type) {
         return new Date( this.$('.query.' + type + '.end-date').val().toLowerCase() );
       }.bind(this),
     },
