@@ -1,0 +1,5 @@
+<tr>
+  <td><input type='checkbox' class='filter {{filterType}}' data-filter='{{filterType}}' /></td>
+  <td>{{label}}</td>
+  <td><input type='text' class='query {{filterType}}' /></td>
+</tr>

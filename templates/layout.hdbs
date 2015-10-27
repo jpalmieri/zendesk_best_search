@@ -4,18 +4,13 @@
 
 <form action="" method="POST" class='well'>
   <select class='rules'>
-    <option data-type="macros">Macros</option>
-    <option data-type="triggers">Triggers</option>
-    <option data-type="automations">Automations</option>
+    <option data-type="macro">Macros</option>
+    <option data-type="trigger">Triggers</option>
+    <option data-type="automation">Automations</option>
   </select>
 
-      <section data-main />
+    <section data-main />
 
-  <input type="submit" value="Search" class="search btn" />
-  <input type="button" value="Stop" class="stop btn" />
-  <label class='checkbox pull-right'>
-    <input type='checkbox' class="check status" /> Inlcude inactive items
-  </label>
 </form>
 
 <div class="results">

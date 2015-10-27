@@ -26,22 +26,26 @@
     },
 
     initialize: function() {
-      this.switchTo('macros-search');
       this.stopped = true;
+      this.initialized = true;
     },
 
     activate: function() {
+      if (this.initialized) {
+        this.switchSearchTemplate();
+        this.initialized = false;
+      }
+    },
+
+    switchSearchTemplate: function() {
+      var searchType = this.$('select.rules').find('option:selected').data('type');
+      var searchFormHtml = this.renderSearchForm(this.searchForms[searchType], searchType);
+      this.$('section[data-main]').html(searchFormHtml);
       this.$('.query.date').datepicker({ dateFormat: "yy-mm-dd" });
     },
 
-    switchSearchTemplate: function(event) {
-      var $selectedOption = this.$(event.target).find('option:selected');
-      this.switchTo( $selectedOption.data('type') + '-search' );
-      this.activate();
-    },
-
     generateUrl: function() {
-      var type = this.$('select.rules').find('option:selected').data('type');
+      var type = this.$('select.rules').find('option:selected').data('type') + 's';
       var includeInactive = this.$('.check.status').is(':checked');
 
       var url = BASE_URL + type;
@@ -82,7 +86,7 @@
     },
 
     filterResults: function(data) {
-      var type = this.$('select.rules').find('option:selected').data('type');
+      var type = this.$('select.rules').find('option:selected').data('type') + 's';
       var results = data[type];
 
       // Pass results through each selected filter
@@ -262,6 +266,39 @@
       _getEndDateQuery: function(type) {
         return new Date( this.$('.query.' + type + '.end-date').val().toLowerCase() );
       }.bind(this),
+    },
+
+    renderSearchForm: function(options, searchType) {
+      var rows = _.map(options, function(row) {
+        return this.renderTemplate('search-form-row-' + row.inputType, row);
+      }.bind(this) );
+      return this.renderTemplate('search-form-template', {rows: rows, searchType: searchType} );
+    },
+
+    searchForms: {
+      macro: {
+        row1: {inputType: 'text', filterType: 'title', label: 'Title includes'},
+        row2: {inputType: 'text', filterType: 'tag', label: 'Tag includes'},
+        row3: {inputType: 'text', filterType: 'comment', label: 'Comment includes'},
+        row4: {inputType: 'date', filterType: 'created', label: 'Created between'},
+        row5: {inputType: 'date', filterType: 'updated', label: 'Updated between'}
+      },
+
+      trigger: {
+        row1: {inputType: 'text', filterType: 'title', label: 'Title includes'},
+        row2: {inputType: 'text', filterType: 'tag', label: 'Tag includes'},
+        row3: {inputType: 'text', filterType: 'note', label: 'Notification includes'},
+        row4: {inputType: 'date', filterType: 'created', label: 'Created between'},
+        row5: {inputType: 'date', filterType: 'updated', label: 'Updated between'}
+      },
+
+      automation: {
+        row1: {inputType: 'text', filterType: 'title', label: 'Title includes'},
+        row2: {inputType: 'text', filterType: 'tag', label: 'Tag includes'},
+        row3: {inputType: 'text', filterType: 'note', label: 'Notification includes'},
+        row4: {inputType: 'date', filterType: 'created', label: 'Created between'},
+        row5: {inputType: 'date', filterType: 'updated', label: 'Updated between'}
+      }
     }
   };
 
