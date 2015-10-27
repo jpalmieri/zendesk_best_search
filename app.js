@@ -176,17 +176,17 @@
 
     filterBy: {
       title: function(items) {
-        var query = this._getStringQuery('title');
+        var query = this.getStringQuery('title');
         return _.filter(items, function(item) {
           return item.title.match(query);
         });
       },
 
       tag: function(items) {
-        var query = this._getStringQuery('tag');
+        var query = this.getStringQuery('tag');
         var results = _.filter(items, function(item) {
           // Filter out tags which don't match query
-          var tags = _.filter(this._getTagValues(item), function(tag) {
+          var tags = _.filter(this.getTagValues(item), function(tag) {
             return tag.match(query);
           });
           if ( tags.length > 0 ) return item;
@@ -196,10 +196,10 @@
       },
 
       comment: function(items) {
-        var query = this._getStringQuery('comment');
+        var query = this.getStringQuery('comment');
         var results = _.filter(items, function(item) {
           // Filter out comments which don't match query
-          var comments = _.filter(this._getComments(item), function(comment) {
+          var comments = _.filter(this.getComments(item), function(comment) {
             return comment.match(query);
           });
           if ( comments.length > 0 ) return item;
@@ -209,10 +209,10 @@
       },
 
       note: function(triggers) {
-        var query = this._getStringQuery('note');
+        var query = this.getStringQuery('note');
         var results = _.filter(triggers, function(trigger) {
           // Filter out notifications which don't match query
-          var notifications = _.filter(this._getNotifications(trigger), function(notification) {
+          var notifications = _.filter(this.getNotifications(trigger), function(notification) {
             return notification.match(query);
           });
           if ( notifications.length > 0 ) return trigger;
@@ -222,8 +222,8 @@
       },
 
       updated: function(items) {
-        var startDate = this._getStartDateQuery('updated');
-        var endDate = this._getEndDateQuery('updated');
+        var startDate = this.getStartDateQuery('updated');
+        var endDate = this.getEndDateQuery('updated');
         var results = _.filter(items, function(item) {
           var updatedDate = new Date(item.updated_at);
           if ( updatedDate > startDate && updatedDate < endDate) {
@@ -235,8 +235,8 @@
       },
 
       created: function(items) {
-        var startDate = this._getStartDateQuery('created');
-        var endDate = this._getEndDateQuery('created');
+        var startDate = this.getStartDateQuery('created');
+        var endDate = this.getEndDateQuery('created');
         var results = _.filter(items, function(item) {
           var createdDate = new Date(item.created_at);
           if ( createdDate > startDate && createdDate < endDate) {
@@ -247,7 +247,7 @@
         return results;
       },
 
-      _getTagValues: function(item) {
+      getTagValues: function(item) {
         var tagActions = _.filter(item.actions, function(action) {
           return action.field.indexOf('_tags') > -1 ||
                  action.field.indexOf('custom_fields_') > -1;
@@ -257,7 +257,7 @@
         return _.reject(values, function(value) { return !value; });
       },
 
-      _getComments: function(macro) {
+      getComments: function(macro) {
         var actions = _.filter(macro.actions, function(action) {
           return action.value && action.field == "comment_value";
         });
@@ -267,7 +267,7 @@
         return comments;
       },
 
-      _getNotifications: function(trigger) {
+      getNotifications: function(trigger) {
         var actions = _.filter(trigger.actions, function(action) {
           return action.value && action.field.indexOf("notification") > -1;
         });
@@ -277,15 +277,15 @@
         return notifications;
       },
 
-      _getStringQuery: function(type) {
+      getStringQuery: function(type) {
         return new RegExp(this.$('.query.' + type).val(), 'i');
       }.bind(this),
 
-      _getStartDateQuery: function(type) {
+      getStartDateQuery: function(type) {
         return new Date( this.$('.query.' + type + '.start-date').val().toLowerCase() );
       }.bind(this),
 
-      _getEndDateQuery: function(type) {
+      getEndDateQuery: function(type) {
         return new Date( this.$('.query.' + type + '.end-date').val().toLowerCase() );
       }.bind(this),
     },
