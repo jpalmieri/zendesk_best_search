@@ -14,5 +14,5 @@ A Zendesk navbar app which allows you to search for macros, triggers and automat
 Please submit bug reports to Issues. Pull requests are welcome.
 
 ### Screenshot(s):
-![screenshot](https://i.gyazo.com/bf0baf467bd4538c4e4906985f6a7f11.png)
-![screenshot](https://i.gyazo.com/53a18c0b3eb9f22319a9dbfb5015344e.png)
+![screenshot](https://i.gyazo.com/f399187a510b71a3c3c70fa3df83b06e.png)
+![screenshot](https://i.gyazo.com/a2b1646db6d84056e1b0ff6803f9c6ca.png)
