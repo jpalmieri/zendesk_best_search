@@ -4,6 +4,7 @@ A Zendesk navbar app which allows you to search for macros, triggers and automat
 
 ### Filter by:
 
+* Title
 * Tag
 * Comment (macros only)
 * Notifications (triggers and automations only)
@@ -13,5 +14,5 @@ A Zendesk navbar app which allows you to search for macros, triggers and automat
 Please submit bug reports to Issues. Pull requests are welcome.
 
 ### Screenshot(s):
-![screenshot](https://i.gyazo.com/e0c24d9fa44e020bd1319faacb15e8a5.png)
-![screenshot](https://i.gyazo.com/7e0f9f59e1423325f32a3c7f1c27bcbf.png)
+![screenshot](https://i.gyazo.com/bf0baf467bd4538c4e4906985f6a7f11.png)
+![screenshot](https://i.gyazo.com/53a18c0b3eb9f22319a9dbfb5015344e.png)
