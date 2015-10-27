@@ -13,7 +13,8 @@
       'mouseup .results th':                'sortTable',
       'change select.rules':                'switchSearchTemplate',
       'change .query':                      'handleChangedQuery',
-      'keyup .query':                       'handleChangedQuery'
+      'keyup .query':                       'handleChangedQuery',
+      'click .query-clear':                 'clearQuery'
     },
 
     requests: {
@@ -76,6 +77,12 @@
       } else {
         this.$('.search.btn').prop('disabled', true);
       }
+    },
+
+    clearQuery: function(event) {
+      this.$(event.target).siblings('.query').val('').select();
+      this.toggleSearch();
+      this.$(event.target).hide();
     },
 
     startSearch: function() {
