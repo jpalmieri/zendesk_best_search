@@ -324,6 +324,12 @@
         row3: {inputType: 'text', filterType: 'note', label: 'Notification includes'},
         row4: {inputType: 'date', filterType: 'created', label: 'Created between'},
         row5: {inputType: 'date', filterType: 'updated', label: 'Updated between'}
+      },
+
+      view: {
+        row1: {inputType: 'text', filterType: 'title', label: 'Title includes'},
+        row4: {inputType: 'date', filterType: 'created', label: 'Created between'},
+        row5: {inputType: 'date', filterType: 'updated', label: 'Updated between'}
       }
     }
   };

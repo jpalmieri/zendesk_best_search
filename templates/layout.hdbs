@@ -13,6 +13,9 @@
     <li data-type="automation">
       <a>Automations</a>
     </li>
+    <li data-type="view">
+      <a>Views</a>
+    </li>
   </ul>
 
     <section data-main />
