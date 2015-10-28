@@ -11,7 +11,7 @@
       'click .stop.btn':                    'stopSearch',
       'mousedown .results th':              'beforeSort',
       'mouseup .results th':                'sortTable',
-      'change select.rules':                'switchSearchTemplate',
+      'click .rules a':                     'switchSearchTemplate',
       'change .query':                      'handleChangedQuery',
       'keyup .query':                       'handleChangedQuery',
       'click .query-clear':                 'clearQuery'
@@ -39,15 +39,18 @@
       }
     },
 
-    switchSearchTemplate: function() {
-      var searchType = this.$('select.rules').find('option:selected').data('type');
+    switchSearchTemplate: function(event) {
+      var $selectedOption = this.$(event.target).closest('li');
+      var searchType = $selectedOption.data('type');
       var searchFormHtml = this.renderSearchForm(this.searchForms[searchType], searchType);
       this.$('section[data-main]').html(searchFormHtml);
       this.$('.query.date').datepicker({ dateFormat: "yy-mm-dd" });
+      // UI: Make current tab highlighted (and only current tab)
+      $selectedOption.addClass('active').siblings().removeClass('active');
     },
 
     generateUrl: function() {
-      var type = this.$('select.rules').find('option:selected').data('type') + 's';
+      var type = this.$('.rules a').closest('li.active').data('type') + 's';
       var includeInactive = this.$('.check.status').is(':checked');
 
       var url = BASE_URL + type;
@@ -112,7 +115,7 @@
     },
 
     filterResults: function(data) {
-      var type = this.$('select.rules').find('option:selected').data('type') + 's';
+      var type = this.$('.rules a').closest('li.active').data('type') + 's';
       var results = data[type];
 
       // Pass results through each selected filter
