@@ -34,7 +34,8 @@
 
     activate: function() {
       if (this.initialized) {
-        this.switchSearchTemplate();
+        // Load template associated with tab that has .active by default in html
+        this.$('.rules .active a').trigger('click');
         this.initialized = false;
       }
     },
