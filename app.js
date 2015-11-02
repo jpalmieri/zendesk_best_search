@@ -282,7 +282,9 @@
       },
 
       getStringQuery: function(type) {
-        return new RegExp(this.$('.query.' + type).val(), 'i');
+        var query = this.$('.query.' + type).val();
+        var escapedQuery = query.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
+        return new RegExp(escapedQuery, 'i');
       }.bind(this),
 
       getStartDateQuery: function(type) {
