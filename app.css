@@ -20,7 +20,7 @@ form {
   }
 }
 
-select.rules, table.search-options {
+table.search-options {
   margin-bottom: 10px;
 }
 
@@ -64,8 +64,4 @@ input.stop.btn, .icon-loading-spinner, .results table {
     color: green;
     font-weight: bold;
   }
-}
-
-form td:nth-child(2) {
-  cursor: pointer;
 }
