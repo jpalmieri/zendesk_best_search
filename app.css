@@ -1,6 +1,10 @@
 form {
   width: 550px;
 
+  table.search-options {
+    margin-bottom: 10px;
+  }
+
   label.inactive-checkbox {
     padding: 10px 11px;
   }
@@ -18,10 +22,6 @@ form {
   .new-item-link {
     margin-top: 10px;
   }
-}
-
-table.search-options {
-  margin-bottom: 10px;
 }
 
 .table td {
