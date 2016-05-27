@@ -43,7 +43,7 @@
     switchSearchTemplate: function(event) {
       var $selectedOption = this.$(event.target).closest('li');
       var searchType = $selectedOption.data('type');
-      var searchFormHtml = this.renderSearchForm(this.searchForms[searchType], searchType);
+      var searchFormHtml = this.renderSearchForm(searchType);
       this.$('section[data-main]').html(searchFormHtml);
       this.$('.query.date').datepicker({ dateFormat: "yy-mm-dd" });
       // UI: Make current tab highlighted (and only current tab)
@@ -296,44 +296,10 @@
       }.bind(this),
     },
 
-    renderSearchForm: function(options, searchType) {
-      var rows = _.map(options, function(row) {
-        return this.renderTemplate('search-form-row-' + row.inputType, row);
-      }.bind(this) );
-      return this.renderTemplate('search-form-template', {rows: rows, searchType: searchType} );
+    renderSearchForm: function(searchType) {
+      var searchOptions = this.renderTemplate('search-form-' + searchType);
+      return this.renderTemplate('search-form-template', {searchOptions: searchOptions, searchType: searchType} );
     },
-
-    searchForms: {
-      macro: {
-        row1: {inputType: 'text', filterType: 'title', label: 'Title includes'},
-        row2: {inputType: 'text', filterType: 'tag', label: 'Tag includes'},
-        row3: {inputType: 'text', filterType: 'comment', label: 'Comment includes'},
-        row4: {inputType: 'date', filterType: 'created', label: 'Created between'},
-        row5: {inputType: 'date', filterType: 'updated', label: 'Updated between'}
-      },
-
-      trigger: {
-        row1: {inputType: 'text', filterType: 'title', label: 'Title includes'},
-        row2: {inputType: 'text', filterType: 'tag', label: 'Tag includes'},
-        row3: {inputType: 'text', filterType: 'note', label: 'Notification includes'},
-        row4: {inputType: 'date', filterType: 'created', label: 'Created between'},
-        row5: {inputType: 'date', filterType: 'updated', label: 'Updated between'}
-      },
-
-      automation: {
-        row1: {inputType: 'text', filterType: 'title', label: 'Title includes'},
-        row2: {inputType: 'text', filterType: 'tag', label: 'Tag includes'},
-        row3: {inputType: 'text', filterType: 'note', label: 'Notification includes'},
-        row4: {inputType: 'date', filterType: 'created', label: 'Created between'},
-        row5: {inputType: 'date', filterType: 'updated', label: 'Updated between'}
-      },
-
-      view: {
-        row1: {inputType: 'text', filterType: 'title', label: 'Title includes'},
-        row4: {inputType: 'date', filterType: 'created', label: 'Created between'},
-        row5: {inputType: 'date', filterType: 'updated', label: 'Updated between'}
-      }
-    }
   };
 
 }());

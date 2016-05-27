@@ -1,10 +1,4 @@
-<table class='table search-options'>
-  <tbody>
-    {{#each rows}}
-      {{{this}}}
-    {{/each}}
-  </tbody>
-</table>
+{{{searchOptions}}}
 
 <input type="submit" value="Search" class="search btn" disabled/>
 <input type="button" value="Stop" class="stop btn" />
