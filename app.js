@@ -1,6 +1,12 @@
 (function() {
 
-  var BASE_URL = '/api/v2/';
+  var API_PATH = '/api/v2/';
+  var ENDPOINT_PATH = {
+    macro: 'macros/active.json',
+    trigger: 'triggers/active.json',
+    automation: 'automations/active.json',
+    view: 'views/active.json'
+  };
 
   return {
     events: {
@@ -51,12 +57,13 @@
     },
 
     generateUrl: function() {
-      var type = this.$('.rules a').closest('li.active').data('type') + 's';
+      var searchType = this.$('.rules a').closest('li.active').data('type');
       var includeInactive = this.$('.check.status').is(':checked');
 
-      var url = BASE_URL + type;
-      if (!includeInactive) url += '/active';
-      url += '.json';
+      var url = API_PATH + ENDPOINT_PATH[searchType];
+
+      // Use a different endpoint if returning inactive items (remove '/active')
+      if (includeInactive) url = url.replace('/active', '');
 
       return url;
     },
