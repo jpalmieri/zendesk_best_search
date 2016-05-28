@@ -8,10 +8,12 @@
         {{this.name}}
       </td>
       <td>
-        <a href="/rules/new?copy_id={{this.id}}&filter={{../../type}}" target="_blank">
-          clone
-        </a>
-        <span class="delim">|</span>
+        {{#unless ../../isDcSearch}}
+          <a href="/rules/new?copy_id={{this.id}}&filter={{../../type}}" target="_blank">
+            clone
+          </a>
+          <span class="delim">|</span>
+        {{/unless}}
         <a href="/rules/{{this.id}}/edit" target="_blank" class='edit-this'>
           edit
         </a>

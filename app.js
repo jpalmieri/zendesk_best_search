@@ -160,8 +160,15 @@
       }
     },
 
-    displayResults: function (results, type) {
-      var resultsTemplate = this.renderTemplate('results', {results: results, type: type} );
+    displayResults: function (results) {
+      var searchType = this.$('.rules a').closest('li.active').data('type');
+      var isDcSearch = searchType == 'dynamicContent';
+      var options = {
+        results: results,
+        type: searchType,
+        isDcSearch: isDcSearch
+      };
+      var resultsTemplate = this.renderTemplate('results', options);
       this.$('.results tbody').append(resultsTemplate);
 
       // Display result count
@@ -330,10 +337,12 @@
     renderSearchForm: function(searchType) {
       var searchOptions = this.renderTemplate('search-form-' + searchType);
       var newItemPath = NEW_ITEM_PATH[searchType];
+      var isDcSearch = searchType == 'dynamicContent';
       var templateData = {
         searchOptions: searchOptions,
         searchType: searchType,
-        newItemPath: newItemPath
+        newItemPath: newItemPath,
+        isDcSearch: isDcSearch
       };
       return this.renderTemplate('search-form-template', templateData);
     },
