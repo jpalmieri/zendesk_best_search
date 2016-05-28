@@ -5,13 +5,15 @@
     macro: 'macros/active.json',
     trigger: 'triggers/active.json',
     automation: 'automations/active.json',
-    view: 'views/active.json'
+    view: 'views/active.json',
+    dynamicContent: 'dynamic_content/items.json'
   };
   var NEW_ITEM_PATH = {
     macro: '/rules/new?filter=macro',
     trigger: '/rules/new?filter=trigger',
     automation: '/rules/new?filter=automation',
-    view: '/rules/new?filter=view'
+    view: '/rules/new?filter=view',
+    dynamicContent: '/dynamic_content/items/new'
   };
 
   return {
@@ -68,9 +70,11 @@
 
       var url = API_PATH + ENDPOINT_PATH[searchType];
 
-      // Use a different endpoint if returning inactive items (remove '/active')
-      if (includeInactive) url = url.replace('/active', '');
-
+      // Use a different endpoint if returning inactive items,
+      // except for dynamic content, which doesn't have this endpoint
+      if (includeInactive && searchType != 'dynamicContent') {
+        url = url.replace('/active', '');
+      }
       return url;
     },
 
@@ -199,6 +203,20 @@
         });
       },
 
+      name: function(items) {
+        var query = this.getStringQuery('name');
+        return _.filter(items, function(item) {
+          return item.name.match(query);
+        });
+      },
+
+      placeholder: function(items) {
+        var query = this.getStringQuery('placeholder');
+        return _.filter(items, function(item) {
+          return item.placeholder.match(query);
+        });
+      },
+
       tag: function(items) {
         var query = this.getStringQuery('tag');
         var results = _.filter(items, function(item) {
@@ -316,7 +334,7 @@
         searchOptions: searchOptions,
         searchType: searchType,
         newItemPath: newItemPath
-      }
+      };
       return this.renderTemplate('search-form-template', templateData);
     },
   };

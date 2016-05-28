@@ -2,7 +2,10 @@
   {{#if this}}
     <tr>
       <td>
+        <!--Some result types have a title, some have a name (e.g., dynamic content).
+            So only one of them will display at a time-->
         {{this.title}}
+        {{this.name}}
       </td>
       <td>
         <a href="/rules/new?copy_id={{this.id}}&filter={{../../type}}" target="_blank">
