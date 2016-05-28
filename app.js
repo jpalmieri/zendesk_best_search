@@ -7,6 +7,12 @@
     automation: 'automations/active.json',
     view: 'views/active.json'
   };
+  var NEW_ITEM_PATH = {
+    macro: '/rules/new?filter=macro',
+    trigger: '/rules/new?filter=trigger',
+    automation: '/rules/new?filter=automation',
+    view: '/rules/new?filter=view'
+  };
 
   return {
     events: {
@@ -305,7 +311,13 @@
 
     renderSearchForm: function(searchType) {
       var searchOptions = this.renderTemplate('search-form-' + searchType);
-      return this.renderTemplate('search-form-template', {searchOptions: searchOptions, searchType: searchType} );
+      var newItemPath = NEW_ITEM_PATH[searchType];
+      var templateData = {
+        searchOptions: searchOptions,
+        searchType: searchType,
+        newItemPath: newItemPath
+      }
+      return this.renderTemplate('search-form-template', templateData);
     },
   };
 

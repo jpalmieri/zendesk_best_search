@@ -6,5 +6,5 @@
   <input type='checkbox' class="check status" /> Include inactive {{searchType}}s
 </label>
 <div class='new-item-link'>
-  <a href='/rules/new?filter={{searchType}}' target='_blank'>Create new {{searchType}}</a>
+  <a href='{{newItemPath}}' target='_blank'>Create new {{searchType}}</a>
 </div>
