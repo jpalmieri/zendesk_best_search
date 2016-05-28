@@ -123,8 +123,8 @@
     },
 
     filterResults: function(data) {
-      var type = this.$('.rules a').closest('li.active').data('type') + 's';
-      var results = data[type];
+      var itemType = this.$('.rules a').closest('li.active').data('item');
+      var results = data[itemType];
 
       // Pass results through each selected filter
       _.each(this.$('.query'), function(query) {
@@ -140,7 +140,7 @@
         macro.updated_at = macro.updated_at.substring(0,10);
       });
 
-      this.displayResults(results, type);
+      this.displayResults(results, itemType);
 
       // Get additional pages of api request results
       if (data.next_page && !this.stopped){

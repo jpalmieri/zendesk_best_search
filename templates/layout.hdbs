@@ -4,16 +4,16 @@
 
 <form action="" method="POST" class='well'>
   <ul class='rules nav nav-pills'>
-    <li class='active' data-type="macro">
+    <li class='active' data-type="macro" data-item='macros'>
       <a>Macros</a>
     </li>
-    <li data-type="trigger">
+    <li data-type="trigger" data-item='triggers'>
       <a>Triggers</a>
     </li>
-    <li data-type="automation">
+    <li data-type="automation" data-item='automations'>
       <a>Automations</a>
     </li>
-    <li data-type="view">
+    <li data-type="view" data-item='views'>
       <a>Views</a>
     </li>
   </ul>
