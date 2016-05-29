@@ -8,15 +8,19 @@
         {{this.name}}
       </td>
       <td>
-        {{#unless ../../isDcSearch}}
+        {{#if ../../isDcSearch}}
+          <a href="/dynamic_content/items/{{this.id}}" target="_blank" class='edit-this'>
+            edit
+          </a>
+        {{else}}
           <a href="/rules/new?copy_id={{this.id}}&filter={{../../type}}" target="_blank">
             clone
           </a>
           <span class="delim">|</span>
-        {{/unless}}
-        <a href="/rules/{{this.id}}/edit" target="_blank" class='edit-this'>
-          edit
-        </a>
+          <a href="/rules/{{this.id}}/edit" target="_blank" class='edit-this'>
+            edit
+          </a>
+        {{/if}}
       </td>
       <td>{{this.created_at}}</td>
       <td>{{this.updated_at}}</td>
