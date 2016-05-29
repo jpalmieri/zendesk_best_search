@@ -64,18 +64,18 @@
       $selectedOption.addClass('active').siblings().removeClass('active');
     },
 
-    generateUrl: function() {
+    buildApiUrl: function() {
       var searchType = this.$('.rules a').closest('li.active').data('type');
       var includeInactive = this.$('.check.status').is(':checked');
 
-      var url = API_PATH + ENDPOINT_PATH[searchType];
+      var apiUrl = API_PATH + ENDPOINT_PATH[searchType];
 
       // Use a different endpoint if returning inactive items,
       // except for dynamic content, which doesn't have this endpoint
       if (includeInactive && searchType != 'dynamicContent') {
-        url = url.replace('/active', '');
+        apiUrl = apiUrl.replace('/active', '');
       }
-      return url;
+      return apiUrl;
     },
 
     handleChangedQuery: function(event) {
@@ -117,7 +117,7 @@
       this.$('.results ul').empty();
       this.$('form *:not(.stop)').prop('disabled', true);
 
-      this.ajax( 'requestRules', this.generateUrl() );
+      this.ajax( 'requestRules', this.buildApiUrl() );
       return false;
     },
 
