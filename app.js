@@ -263,6 +263,19 @@
         return results;
       },
 
+      content: function(dcItems) {
+        var query = this.getStringQuery('content');
+        var results = _.filter(dcItems, function(dcItem) {
+          // Filter out contents which don't match query
+          var contents = _.filter(this.getContents(dcItem), function(content) {
+            return content.match(query);
+          });
+          if ( contents.length > 0 ) return dcItem;
+        }.bind(this) );
+
+        return results;
+      },
+
       updated: function(items) {
         var startDate = this.getStartDateQuery('updated');
         var endDate = this.getEndDateQuery('updated');
@@ -317,6 +330,17 @@
           return action.value[action.value.length - 1].toLowerCase();
         });
         return notifications;
+      },
+
+      getContents: function(dcItem) {
+        // Filter out variants without content
+        var variants = _.filter(dcItem.variants, function(variant) {
+          return variant.content;
+        });
+        var contents = _.map(variants, function(variant) {
+          return variant.content.toLowerCase();
+        });
+        return contents;
       },
 
       getStringQuery: function(type) {

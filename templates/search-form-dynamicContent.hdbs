@@ -10,6 +10,16 @@
       </td>
     </tr>
 
+    <tr data-filter='content' >
+      <td>Content includes</td>
+      <td>
+        <div class='btn-group'>
+          <input type='text' class='query content' />
+          <span class="icon-remove query-clear" />
+        </div>
+      </td>
+    </tr>
+
     <tr data-filter='placeholder' >
       <td>Placeholder includes</td>
       <td>
