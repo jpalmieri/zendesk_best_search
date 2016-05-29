@@ -59,6 +59,7 @@
       var searchType = $selectedOption.data('type');
       var searchFormHtml = this.renderSearchForm(searchType);
       this.$('section[data-main]').html(searchFormHtml);
+      // Add jQuery datepicker to date fields
       this.$('.query.date').datepicker({dateFormat: "yy-mm-dd"});
       // UI: Make current tab highlighted (and only current tab)
       $selectedOption.addClass('active').siblings().removeClass('active');
@@ -77,6 +78,7 @@
       return this.renderTemplate('search-form-template', templateData);
     },
 
+    // Enable/disable elements when fields' values change
     handleChangedQuery: function(event) {
       this.toggleSearchBtn();
 
@@ -88,6 +90,8 @@
       }
     },
 
+    // Only show seach button when a field has value
+    // to avoid being able to search without a query
     toggleSearchBtn: function() {
       var atLeastOneQueryHasText = _.some(this.$('.query'), function(queryInput) {
         return this.$(queryInput).val();
@@ -99,6 +103,7 @@
       }
     },
 
+    // Clear field value when 'x' is clicked
     clearQuery: function(event) {
       this.$(event.target).siblings('.query').val('').select();
       this.toggleSearchBtn();
@@ -117,6 +122,7 @@
       this.$('form *:not(.stop)').prop('disabled', true);
 
       this.ajax( 'requestItems', this.buildApiUrl() );
+      // Avoid actual form submission, which redirects to new page
       return false;
     },
 
@@ -218,6 +224,7 @@
       this.$('.icon-loading-spinner').hide();
     },
 
+    // Display spinner while sorting results table
     beforeSort: function(event) {
       this.$('.icon-loading-spinner').css('display', 'inline-block');
       var $th = this.$(event.target);
@@ -226,6 +233,9 @@
       $th.toggleClass('ascending');
     },
 
+    // This object includes filter functions which process items
+    // from API response, returning only items which match given query.
+    // Used in conjunction: e.g., matches (title && name), not (title || name)
     filterBy: {
       title: function(items) {
         var query = this.getStringQuery('title');
@@ -326,6 +336,9 @@
         return results;
       },
 
+      // The 'get' functions below are functions
+      // which assist the filter functions above.
+      // They are only used within the scope of this object (filterBy).
       getTagValues: function(item) {
         var tagActions = _.filter(item.actions, function(action) {
           return action.field.indexOf('_tags') > -1 ||
