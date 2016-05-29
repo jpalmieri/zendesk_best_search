@@ -25,10 +25,18 @@
       </td>
       <td>{{this.created_at}}</td>
       <td>{{this.updated_at}}</td>
-      {{#if this.active}}
-        <td>Active</td>
+      {{#if ../../isDcSearch}}
+        {{#if this.active}}
+          <td>Active variants</td>
+        {{else}}
+          <td>Only default variant</td>
+        {{/if}}
       {{else}}
-        <td>Inactive</td>
+        {{#if this.active}}
+          <td>Active</td>
+        {{else}}
+          <td>Inactive</td>
+        {{/if}}
       {{/if}}
     </tr>
   {{/if}}

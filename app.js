@@ -150,6 +150,18 @@
         macro.updated_at = macro.updated_at.substring(0,10);
       });
 
+      // Return 'active' if at least one Dynamic Content
+      // variant (other than the default) is active
+      var searchType = this.$('.rules a').closest('li.active').data('type');
+      if (searchType == 'dynamicContent') {
+        _.each(results, function(item){
+          var variantIsActive = _.some(item.variants, function(variant){
+            return variant.active && !variant.default;
+          });
+          if (variantIsActive) item.active = true;
+        });
+      }
+
       this.displayResults(results, itemType);
 
       // Get additional pages of api request results
