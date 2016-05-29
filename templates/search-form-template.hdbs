@@ -8,5 +8,9 @@
   {{/unless}}
 </label>
 <div class='new-item-link'>
-  <a href='{{newItemPath}}' target='_blank'>Create new {{searchType}}</a>
+  {{#if isDcSearch}}
+    <a href='{{newItemPath}}' target='_blank'>Create new dyanmic content item</a>
+  {{else}}
+    <a href='{{newItemPath}}' target='_blank'>Create new {{searchType}}</a>
+  {{/if}}
 </div>
