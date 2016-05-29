@@ -1,4 +1,4 @@
-{{{searchOptions}}}
+{{{searchFields}}}
 
 <input type="submit" value="Search" class="search btn" disabled/>
 <input type="button" value="Stop" class="stop btn" />

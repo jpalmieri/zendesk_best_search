@@ -3,7 +3,7 @@
 </header>
 
 <form action="" method="POST" class='well'>
-  <ul class='rules nav nav-pills'>
+  <ul class='search-types nav nav-pills'>
     <li class='active' data-type="macro" data-item='macros'>
       <a>Macros</a>
     </li>
