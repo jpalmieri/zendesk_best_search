@@ -2,10 +2,11 @@
   {{#if this}}
     <tr>
       <td>
-        <!--Some result types have a title, some have a name (e.g., dynamic content).
-            So only one of them will display at a time-->
-        {{this.title}}
-        {{this.name}}
+        {{#if ../../isDcSearch}}
+          {{this.name}}
+        {{else}}
+          {{this.title}}
+        {{/if}}
       </td>
       <td>
         {{#if ../../isDcSearch}}
