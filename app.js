@@ -1,27 +1,41 @@
 (function() {
 
-  var BASE_URL = '/api/v2/';
+  var API_PATH = '/api/v2';
+  var ENDPOINT_PATH = {
+    macro: '/macros/active.json',
+    trigger: '/triggers/active.json',
+    automation: '/automations/active.json',
+    view: '/views/active.json',
+    dynamicContent: '/dynamic_content/items.json'
+  };
+  var NEW_ITEM_PATH = {
+    macro: '/rules/new?filter=macro',
+    trigger: '/rules/new?filter=trigger',
+    automation: '/rules/new?filter=automation',
+    view: '/rules/new?filter=view',
+    dynamicContent: '/dynamic_content/items/new'
+  };
 
   return {
     events: {
       'app.activated':                      'initialize',
       'pane.activated':                     'activate',
       'click .search.btn':                  'startSearch',
-      'requestRules.done':                  'filterResults',
+      'requestItems.done':                  'processResults',
       'click .stop.btn':                    'stopSearch',
       'mousedown .results th':              'beforeSort',
       'mouseup .results th':                'sortTable',
-      'click .rules a':                     'switchSearchTemplate',
+      'click .search-types a':              'switchSearchTemplate',
       'change .query':                      'handleChangedQuery',
       'keyup .query':                       'handleChangedQuery',
       'click .query-clear':                 'clearQuery'
     },
 
     requests: {
-      requestRules: function(url) {
+      requestItems: function(url) {
         return {
-          url: url,
-          type: 'GET',
+          url:       url,
+          type:     'GET',
           dataType: 'json'
         };
       }
@@ -35,7 +49,7 @@
     activate: function() {
       if (this.initialized) {
         // Load template associated with tab that has .active by default in html
-        this.$('.rules .active a').trigger('click');
+        this.$('.search-types .active a').trigger('click');
         this.initialized = false;
       }
     },
@@ -43,26 +57,30 @@
     switchSearchTemplate: function(event) {
       var $selectedOption = this.$(event.target).closest('li');
       var searchType = $selectedOption.data('type');
-      var searchFormHtml = this.renderSearchForm(this.searchForms[searchType], searchType);
+      var searchFormHtml = this.renderSearchForm(searchType);
       this.$('section[data-main]').html(searchFormHtml);
-      this.$('.query.date').datepicker({ dateFormat: "yy-mm-dd" });
+      // Add jQuery datepicker to date fields
+      this.$('.query.date').datepicker({dateFormat: "yy-mm-dd"});
       // UI: Make current tab highlighted (and only current tab)
       $selectedOption.addClass('active').siblings().removeClass('active');
     },
 
-    generateUrl: function() {
-      var type = this.$('.rules a').closest('li.active').data('type') + 's';
-      var includeInactive = this.$('.check.status').is(':checked');
-
-      var url = BASE_URL + type;
-      if (!includeInactive) url += '/active';
-      url += '.json';
-
-      return url;
+    renderSearchForm: function(searchType) {
+      var searchFields = this.renderTemplate('search-form-' + searchType);
+      var newItemPath = NEW_ITEM_PATH[searchType];
+      var isDcSearch = searchType == 'dynamicContent';
+      var templateData = {
+        searchFields: searchFields,
+        searchType:   searchType,
+        newItemPath:  newItemPath,
+        isDcSearch:   isDcSearch
+      };
+      return this.renderTemplate('search-form-template', templateData);
     },
 
+    // Enable/disable elements when fields' values change
     handleChangedQuery: function(event) {
-      this.toggleSearch();
+      this.toggleSearchBtn();
 
       // Show 'x' to clear input
       if ( this.$(event.target).val() ) {
@@ -72,20 +90,23 @@
       }
     },
 
-    toggleSearch: function() {
+    // Only show seach button when a field has value
+    // to avoid being able to search without a query
+    toggleSearchBtn: function() {
       var atLeastOneQueryHasText = _.some(this.$('.query'), function(queryInput) {
         return this.$(queryInput).val();
       }.bind(this) );
-      if ( atLeastOneQueryHasText ) {
+      if (atLeastOneQueryHasText) {
         this.$('.search.btn').prop('disabled', false);
       } else {
         this.$('.search.btn').prop('disabled', true);
       }
     },
 
+    // Clear field value when 'x' is clicked
     clearQuery: function(event) {
       this.$(event.target).siblings('.query').val('').select();
-      this.toggleSearch();
+      this.toggleSearchBtn();
       this.$(event.target).hide();
     },
 
@@ -100,8 +121,23 @@
       this.$('.results ul').empty();
       this.$('form *:not(.stop)').prop('disabled', true);
 
-      this.ajax( 'requestRules', this.generateUrl() );
+      this.ajax( 'requestItems', this.buildApiUrl() );
+      // Avoid actual form submission, which redirects to new page
       return false;
+    },
+
+    buildApiUrl: function() {
+      var searchType = this.$('.search-types a').closest('li.active').data('type');
+      var includeInactive = this.$('.check.status').is(':checked');
+
+      var apiUrl = API_PATH + ENDPOINT_PATH[searchType];
+
+      // Use a different endpoint if returning inactive items,
+      // except for dynamic content, which doesn't have this endpoint
+      if (includeInactive && searchType != 'dynamicContent') {
+        apiUrl = apiUrl.replace('/active', '');
+      }
+      return apiUrl;
     },
 
     stopSearch: function() {
@@ -115,9 +151,9 @@
       this.$('.icon-loading-spinner').hide();
     },
 
-    filterResults: function(data) {
-      var type = this.$('.rules a').closest('li.active').data('type') + 's';
-      var results = data[type];
+    processResults: function(data) {
+      var itemType = this.$('.search-types a').closest('li.active').data('item');
+      var results = data[itemType];
 
       // Pass results through each selected filter
       _.each(this.$('.query'), function(query) {
@@ -128,23 +164,41 @@
       }.bind(this) );
 
       // Remove times from dates
-      _.each(results, function(macro) {
-        macro.created_at = macro.created_at.substring(0,10);
-        macro.updated_at = macro.updated_at.substring(0,10);
+      _.each(results, function(item) {
+        item.created_at = item.created_at.substring(0,10);
+        item.updated_at = item.updated_at.substring(0,10);
       });
 
-      this.displayResults(results, type);
+      // Return 'active' if at least one Dynamic Content
+      // variant (other than the default) is active
+      var searchType = this.$('.search-types a').closest('li.active').data('type');
+      if (searchType == 'dynamicContent') {
+        _.each(results, function(item){
+          var variantIsActive = _.some(item.variants, function(variant){
+            return variant.active && !variant.default;
+          });
+          if (variantIsActive) item.active = true;
+        });
+      }
+
+      this.displayResults(results, itemType);
 
       // Get additional pages of api request results
       if (data.next_page && !this.stopped){
-        this.ajax('requestRules', data.next_page);
+        this.ajax('requestItems', data.next_page);
       } else {
         this.finishSearch();
       }
     },
 
-    displayResults: function (results, type) {
-      var resultsTemplate = this.renderTemplate('results', {results: results, type: type} );
+    displayResults: function (results) {
+      var searchType = this.$('.search-types a').closest('li.active').data('type');
+      var options = {
+        results:    results,
+        type:       searchType,
+        isDcSearch: searchType == 'dynamicContent'
+      };
+      var resultsTemplate = this.renderTemplate('results', options);
       this.$('.results tbody').append(resultsTemplate);
 
       // Display result count
@@ -170,6 +224,7 @@
       this.$('.icon-loading-spinner').hide();
     },
 
+    // Display spinner while sorting results table
     beforeSort: function(event) {
       this.$('.icon-loading-spinner').css('display', 'inline-block');
       var $th = this.$(event.target);
@@ -178,11 +233,28 @@
       $th.toggleClass('ascending');
     },
 
+    // This object includes filter functions which process items
+    // from API response, returning only items which match given query.
+    // Used in conjunction: e.g., matches (title && name), not (title || name)
     filterBy: {
       title: function(items) {
         var query = this.getStringQuery('title');
         return _.filter(items, function(item) {
           return item.title.match(query);
+        });
+      },
+
+      name: function(dcItems) {
+        var query = this.getStringQuery('name');
+        return _.filter(dcItems, function(item) {
+          return item.name.match(query);
+        });
+      },
+
+      placeholder: function(dcItems) {
+        var query = this.getStringQuery('placeholder');
+        return _.filter(dcItems, function(item) {
+          return item.placeholder.match(query);
         });
       },
 
@@ -193,20 +265,20 @@
           var tags = _.filter(this.getTagValues(item), function(tag) {
             return tag.match(query);
           });
-          if ( tags.length > 0 ) return item;
+          if (tags.length > 0) return item;
         }.bind(this) );
 
         return results;
       },
 
-      comment: function(items) {
+      comment: function(macros) {
         var query = this.getStringQuery('comment');
-        var results = _.filter(items, function(item) {
+        var results = _.filter(macros, function(item) {
           // Filter out comments which don't match query
           var comments = _.filter(this.getComments(item), function(comment) {
             return comment.match(query);
           });
-          if ( comments.length > 0 ) return item;
+          if (comments.length > 0) return item;
         }.bind(this) );
 
         return results;
@@ -219,7 +291,20 @@
           var notifications = _.filter(this.getNotifications(trigger), function(notification) {
             return notification.match(query);
           });
-          if ( notifications.length > 0 ) return trigger;
+          if (notifications.length > 0) return trigger;
+        }.bind(this) );
+
+        return results;
+      },
+
+      content: function(dcItems) {
+        var query = this.getStringQuery('content');
+        var results = _.filter(dcItems, function(dcItem) {
+          // Filter out contents which don't match query
+          var contents = _.filter(this.getContents(dcItem), function(content) {
+            return content.match(query);
+          });
+          if (contents.length > 0) return dcItem;
         }.bind(this) );
 
         return results;
@@ -251,6 +336,9 @@
         return results;
       },
 
+      // The 'get' functions below are functions
+      // which assist the filter functions above.
+      // They are only used within the scope of this object (filterBy).
       getTagValues: function(item) {
         var tagActions = _.filter(item.actions, function(action) {
           return action.field.indexOf('_tags') > -1 ||
@@ -258,7 +346,7 @@
         });
         var values = _.pluck(tagActions, 'value');
         // Remove null values
-        return _.reject(values, function(value) { return !value; });
+        return _.reject(values, function(value) {return !value;});
       },
 
       getComments: function(macro) {
@@ -281,59 +369,30 @@
         return notifications;
       },
 
-      getStringQuery: function(type) {
-        var query = this.$('.query.' + type).val();
+      getContents: function(dcItem) {
+        // Filter out variants without content
+        var variants = _.filter(dcItem.variants, function(variant) {
+          return variant.content;
+        });
+        var contents = _.map(variants, function(variant) {
+          return variant.content.toLowerCase();
+        });
+        return contents;
+      },
+
+      getStringQuery: function(queryType) {
+        var query = this.$('.query.' + queryType).val();
         var escapedQuery = query.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
         return new RegExp(escapedQuery, 'i');
       }.bind(this),
 
-      getStartDateQuery: function(type) {
-        return new Date( this.$('.query.' + type + '.start-date').val().toLowerCase() );
+      getStartDateQuery: function(queryType) {
+        return new Date( this.$('.query.' + queryType + '.start-date').val().toLowerCase() );
       }.bind(this),
 
-      getEndDateQuery: function(type) {
-        return new Date( this.$('.query.' + type + '.end-date').val().toLowerCase() );
-      }.bind(this),
-    },
-
-    renderSearchForm: function(options, searchType) {
-      var rows = _.map(options, function(row) {
-        return this.renderTemplate('search-form-row-' + row.inputType, row);
-      }.bind(this) );
-      return this.renderTemplate('search-form-template', {rows: rows, searchType: searchType} );
-    },
-
-    searchForms: {
-      macro: {
-        row1: {inputType: 'text', filterType: 'title', label: 'Title includes'},
-        row2: {inputType: 'text', filterType: 'tag', label: 'Tag includes'},
-        row3: {inputType: 'text', filterType: 'comment', label: 'Comment includes'},
-        row4: {inputType: 'date', filterType: 'created', label: 'Created between'},
-        row5: {inputType: 'date', filterType: 'updated', label: 'Updated between'}
-      },
-
-      trigger: {
-        row1: {inputType: 'text', filterType: 'title', label: 'Title includes'},
-        row2: {inputType: 'text', filterType: 'tag', label: 'Tag includes'},
-        row3: {inputType: 'text', filterType: 'note', label: 'Notification includes'},
-        row4: {inputType: 'date', filterType: 'created', label: 'Created between'},
-        row5: {inputType: 'date', filterType: 'updated', label: 'Updated between'}
-      },
-
-      automation: {
-        row1: {inputType: 'text', filterType: 'title', label: 'Title includes'},
-        row2: {inputType: 'text', filterType: 'tag', label: 'Tag includes'},
-        row3: {inputType: 'text', filterType: 'note', label: 'Notification includes'},
-        row4: {inputType: 'date', filterType: 'created', label: 'Created between'},
-        row5: {inputType: 'date', filterType: 'updated', label: 'Updated between'}
-      },
-
-      view: {
-        row1: {inputType: 'text', filterType: 'title', label: 'Title includes'},
-        row4: {inputType: 'date', filterType: 'created', label: 'Created between'},
-        row5: {inputType: 'date', filterType: 'updated', label: 'Updated between'}
-      }
+      getEndDateQuery: function(queryType) {
+        return new Date( this.$('.query.' + queryType + '.end-date').val().toLowerCase() );
+      }.bind(this)
     }
   };
-
 }());

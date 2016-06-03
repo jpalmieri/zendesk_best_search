@@ -1,0 +1,69 @@
+<table class='table search-options'>
+  <tbody>
+
+    <tr data-filter='title' >
+      <td>Title includes</td>
+      <td>
+        <div class='btn-group'>
+          <input type='text' class='query title' />
+          <span class="icon-remove query-clear" />
+        </div>
+      </td>
+    </tr>
+
+    <tr data-filter='tag' >
+      <td>Tag includes</td>
+      <td>
+        <div class='btn-group'>
+          <input type='text' class='query tag' />
+          <span class="icon-remove query-clear" />
+        </div>
+      </td>
+    </tr>
+
+    <tr data-filter='note' >
+      <td>Notification includes</td>
+      <td>
+        <div class='btn-group'>
+          <input type='text' class='query note' />
+          <span class="icon-remove query-clear" />
+        </div>
+      </td>
+    </tr>
+
+    <tr data-filter='created'>
+      <td>Created between</td>
+      <td>
+        <div class='btn-group'>
+          <input type='text' class='query date created start-date' />
+          <span class="icon-remove query-clear" />
+        </div>
+      </td>
+      <td>and</td>
+      <td>
+        <div class='btn-group'>
+          <input type='text' class='query date created end-date' />
+          <span class="icon-remove query-clear" />
+        </div>
+      </td>
+    </tr>
+
+    <tr data-filter='updated'>
+      <td>Updated between</td>
+      <td>
+        <div class='btn-group'>
+          <input type='text' class='query date updated start-date' />
+          <span class="icon-remove query-clear" />
+        </div>
+      </td>
+      <td>and</td>
+      <td>
+        <div class='btn-group'>
+          <input type='text' class='query date updated end-date' />
+          <span class="icon-remove query-clear" />
+        </div>
+      </td>
+    </tr>
+
+  </tbody>
+</table>

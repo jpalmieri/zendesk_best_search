@@ -1,16 +1,18 @@
-<table class='table search-options'>
-  <tbody>
-    {{#each rows}}
-      {{{this}}}
-    {{/each}}
-  </tbody>
-</table>
+{{{searchFields}}}
 
 <input type="submit" value="Search" class="search btn" disabled/>
 <input type="button" value="Stop" class="stop btn" />
 <label class='checkbox pull-right inactive-checkbox'>
-  <input type='checkbox' class="check status" /> Include inactive {{searchType}}s
+  {{#unless isDcSearch}}
+    <input type='checkbox' class="check status" /> Include inactive {{searchType}}s
+  {{/unless}}
 </label>
 <div class='new-item-link'>
-  <a href='/rules/new?filter={{searchType}}' target='_blank'>Create new {{searchType}}</a>
+    <a href='{{newItemPath}}' target='_blank'>
+      {{#if isDcSearch}}
+        Create new dynamic content item
+      {{else}}
+        Create new {{searchType}}
+      {{/if}}
+    </a>
 </div>

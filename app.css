@@ -9,6 +9,10 @@ form {
     padding: 10px 11px;
   }
 
+  input.query {
+    width: 85%;
+  }
+
   .query-clear {
     position: absolute;
     right: 18px;

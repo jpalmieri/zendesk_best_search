@@ -1,9 +1,0 @@
-<tr data-filter='{{filterType}}' >
-  <td>{{label}}</td>
-  <td>
-    <div class='btn-group'>
-      <input type='text' class='query {{filterType}}' />
-      <span class="icon-remove query-clear" />
-    </div>
-  </td>
-</tr>
