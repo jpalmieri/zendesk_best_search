@@ -14,15 +14,19 @@
             edit
           </a>
         {{else}}
-          <a href="/rules/new?copy_id={{this.id}}&filter={{../../type}}" target="_blank">
-            clone
-          </a>
-          <span class="delim">|</span>
           {{#if ../../../isMacroSearch}}
+            <a href="admin/macros/new?macro_id={{this.id}}">
+              clone
+            </a>
+            <span class="delim">|</span>
             <a href="admin/macros/{{this.id}}" class='edit-this'>
               edit
             </a>
           {{else}}
+            <a href="/rules/new?copy_id={{this.id}}&filter={{../../type}}" target="_blank">
+              clone
+            </a>
+            <span class="delim">|</span>
             <a href="/rules/{{this.id}}/edit" target="_blank" class='edit-this'>
               edit
             </a>
