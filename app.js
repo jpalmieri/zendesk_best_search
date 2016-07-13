@@ -196,7 +196,8 @@
       var options = {
         results:    results,
         type:       searchType,
-        isDcSearch: searchType == 'dynamicContent'
+        isDcSearch: searchType == 'dynamicContent',
+        isMacroSearch: searchType == 'macro'
       };
       var resultsTemplate = this.renderTemplate('results', options);
       this.$('.results tbody').append(resultsTemplate);
