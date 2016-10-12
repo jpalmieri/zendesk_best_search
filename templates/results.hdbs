@@ -2,46 +2,76 @@
   {{#if this}}
     <tr>
       <td>
-        {{#if ../../isDcSearch}}
+        {{#if ../../searchFormType.dynamicContent}}
           {{this.name}}
-        {{else}}
+        {{/if}}
+        {{#if ../../searchFormType.article}}
+          <a href='{{this.html_url}}'
+          target='_blank'>
+            {{this.title}}
+          </a>
+        {{/if}}
+        {{#if ../../searchFormType.macro}}
+          {{this.title}}
+        {{/if}}
+        {{#if ../../searchFormType.other}}
           {{this.title}}
         {{/if}}
       </td>
       <td>
-        {{#if ../../isDcSearch}}
-          <a href="/dynamic_content/items/{{this.id}}" target="_blank" class='edit-this'>
+        <!-- clone and edit links -->
+        {{#if ../../searchFormType.dynamicContent}}
+          <a href="/dynamic_content/items/{{this.id}}"
+          target="_blank" class='edit-this'>
             edit
           </a>
-        {{else}}
-          {{#if ../../../isMacroSearch}}
-            <a href="admin/macros/new?macro_id={{this.id}}">
-              clone
-            </a>
-            <span class="delim">|</span>
-            <a href="admin/macros/{{this.id}}" class='edit-this'>
-              edit
-            </a>
-          {{else}}
-            <a href="/rules/new?copy_id={{this.id}}&filter={{../../type}}" target="_blank">
-              clone
-            </a>
-            <span class="delim">|</span>
-            <a href="/rules/{{this.id}}/edit" target="_blank" class='edit-this'>
-              edit
-            </a>
-          {{/if}}
+        {{/if}}
+        {{#if ../../searchFormType.article}}
+          <!-- don't renter clone or edit links for article results-->
+        {{/if}}
+        {{#if ../../searchFormType.macro}}
+          <a href="admin/macros/new?macro_id={{this.id}}">
+            clone
+          </a>
+          <span class="delim">|</span>
+          <a href="admin/macros/{{this.id}}" class='edit-this'>
+            edit
+          </a>
+        {{/if}}
+        {{#if ../../searchFormType.other}}
+          <a href="/rules/new?copy_id={{this.id}}&filter={{../../../type}}" target="_blank">
+            clone
+          </a>
+          <span class="delim">|</span>
+          <a href="/rules/{{this.id}}/edit" target="_blank" class='edit-this'>
+            edit
+          </a>
         {{/if}}
       </td>
       <td>{{this.created_at}}</td>
       <td>{{this.updated_at}}</td>
-      {{#if ../../isDcSearch}}
+      {{#if ../../searchFormType.dynamicContent}}
         {{#if this.active}}
           <td>Active variants</td>
         {{else}}
           <td>Only default variant</td>
         {{/if}}
-      {{else}}
+      {{/if}}
+      {{#if ../../searchFormType.article}}
+        {{#if this.draft}}
+          <td>Draft</td>
+        {{else}}
+          <td>Active</td>
+        {{/if}}
+      {{/if}}
+      {{#if ../../searchFormType.macro}}
+        {{#if this.active}}
+          <td>Active</td>
+        {{else}}
+          <td>Inactive</td>
+        {{/if}}
+      {{/if}}
+      {{#if ../../searchFormType.other}}
         {{#if this.active}}
           <td>Active</td>
         {{else}}

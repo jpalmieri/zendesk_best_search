@@ -19,6 +19,9 @@
     <li data-type="dynamicContent" data-item='items'>
       <a>Dynamic Content</a>
     </li>
+    <li data-type="article" data-item='articles'>
+      <a>Articles</a>
+    </li>
   </ul>
 
     <section data-main />

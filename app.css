@@ -13,6 +13,10 @@ form {
     width: 85%;
   }
 
+  select.dropdown {
+    width: 93%;
+  }
+
   .query-clear {
     position: absolute;
     right: 18px;

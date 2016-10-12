@@ -3,15 +3,19 @@
 <input type="submit" value="Search" class="search btn" disabled/>
 <input type="button" value="Stop" class="stop btn" />
 <label class='checkbox pull-right inactive-checkbox'>
-  {{#unless isDcSearch}}
+  {{#unless searchFormType.dynamicContent}}
     <input type='checkbox' class="check status" /> Include inactive {{searchType}}s
   {{/unless}}
 </label>
 <div class='new-item-link'>
     <a href='{{newItemPath}}' target='_blank'>
-      {{#if isDcSearch}}
+      {{#if searchFormType.dynamicContent}}
         Create new dynamic content item
-      {{else}}
+      {{/if}}
+      {{#if searchFormType.article}}
+        <!-- don't render create link for articles -->
+      {{/if}}
+      {{#if searchFormType.other}}
         Create new {{searchType}}
       {{/if}}
     </a>
