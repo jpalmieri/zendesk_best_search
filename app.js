@@ -401,7 +401,7 @@
 
       getComments: function(macro) {
         var actions = _.filter(macro.actions, function(action) {
-          return action.value && action.field == "comment_value";
+          return action.value && (["comment_value", "comment_value_html"].includes(action.field));
         });
         var comments = _.map(actions, function(action) {
           return action.value[1].toLowerCase();
