@@ -404,7 +404,11 @@
           return action.value && (["comment_value", "comment_value_html"].includes(action.field));
         });
         var comments = _.map(actions, function(action) {
-          return action.value[1].toLowerCase();
+          if (typeof(action.value) == "string") {
+            return action.value.toLowerCase();
+          } else {
+            return action.value[1].toLowerCase();
+          }
         });
         return comments;
       },
