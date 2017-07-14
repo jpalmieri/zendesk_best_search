@@ -404,12 +404,13 @@
           return action.value && (["comment_value", "comment_value_html"].includes(action.field));
         });
         var comments = _.map(actions, function(action) {
+          //Rich content macros' value is a string instead of an array. A string full of html.
           if (typeof(action.value) == "string") {
-            return action.value.toLowerCase();
+            return this.stripHTMLTags(action.value.toLowerCase());
           } else {
             return action.value[1].toLowerCase();
           }
-        });
+        }.bind(this));
         return comments;
       },
 
@@ -446,6 +447,10 @@
 
       getEndDateQuery: function(queryType) {
         return new Date( this.$('.query.' + queryType + '.end-date').val().toLowerCase() );
+      }.bind(this),
+
+      stripHTMLTags: function(string) {
+        return string.replace(/<br>/, " ").replace(/<(?:.|\n)*?>/gm, '');
       }.bind(this)
     }
   };
