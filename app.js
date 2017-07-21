@@ -401,11 +401,16 @@
 
       getComments: function(macro) {
         var actions = _.filter(macro.actions, function(action) {
-          return action.value && action.field == "comment_value";
+          return action.value && (["comment_value", "comment_value_html"].includes(action.field));
         });
         var comments = _.map(actions, function(action) {
-          return action.value[1].toLowerCase();
-        });
+          //Rich content macros' value is a string instead of an array. A string full of html.
+          if (typeof(action.value) == "string") {
+            return this.stripHTMLTags(action.value.toLowerCase());
+          } else {
+            return action.value[1].toLowerCase();
+          }
+        }.bind(this));
         return comments;
       },
 
@@ -442,6 +447,10 @@
 
       getEndDateQuery: function(queryType) {
         return new Date( this.$('.query.' + queryType + '.end-date').val().toLowerCase() );
+      }.bind(this),
+
+      stripHTMLTags: function(string) {
+        return string.replace(/<br>/, " ").replace(/<(?:.|\n)*?>/gm, '');
       }.bind(this)
     }
   };
