@@ -26,7 +26,7 @@ A Zendesk navbar app which allows you to search:
 2. `git clone https://github.com/jpalmieri/best-search`
 3. `cd best-search`
 4. `zat package`
-5. Upload and install the created `.zip` file in `/tmp` as a private app in your Zendesk
+5. Upload and install the created `.zip` file in `tmp/` as a private app in your Zendesk
 
 ### Helpful docs
 
