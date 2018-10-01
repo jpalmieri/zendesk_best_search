@@ -21,7 +21,7 @@
       <td>
         <!-- clone and edit links -->
         {{#if ../../searchFormType.dynamicContent}}
-          <a href="/dynamic_content/items/{{this.id}}"
+          <a href="//{{../../../subdomain}}.zendesk.com/dynamic_content/items/{{this.id}}"
           target="_blank" class='edit-this'>
             edit
           </a>
@@ -30,16 +30,16 @@
           <!-- don't render clone or edit links for article results-->
         {{/if}}
         {{#if ../../searchFormType.macro}}
-          <a href="admin/macros/{{this.id}}" class='edit-this'>
+          <a href="//{{../../../subdomain}}.zendesk.com/agent/admin/macros/{{this.id}}" class='edit-this'>
             edit
           </a>
         {{/if}}
         {{#if ../../searchFormType.other}}
-          <a href="/rules/new?copy_id={{this.id}}&filter={{../../../type}}" target="_blank">
+          <a href="//{{../../../subdomain}}.zendesk.com/rules/new?copy_id={{this.id}}&filter={{../../../type}}" target="_blank">
             clone
           </a>
           <span class="delim">|</span>
-          <a href="/rules/{{this.id}}/edit" target="_blank" class='edit-this'>
+          <a href="//{{../../../subdomain}}.zendesk.com/rules/{{this.id}}/edit" target="_blank" class='edit-this'>
             edit
           </a>
         {{/if}}

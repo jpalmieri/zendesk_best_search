@@ -1,0 +1,109 @@
+@import "datepicker";
+@import "spinner";
+
+* {
+  form {
+    width: 550px;
+    margin-left: 10px;
+    margin-top: 10px;
+
+    table.search-options {
+      margin-bottom: 10px;
+    }
+
+    label.inactive-checkbox {
+      padding: 10px 11px;
+    }
+
+    input[type=text] {
+      border-radius: 2px;
+    }
+
+    input.query {
+      width: 100%;
+    }
+
+    select.dropdown {
+      width: 96%;
+    }
+
+    .query-clear {
+      position: absolute;
+      right: -10px;
+      bottom: 17px;
+      height: 14px;
+      margin: auto;
+      display: none;
+    }
+
+    .new-item-link {
+      margin-top: 10px;
+    }
+
+    .btn {
+      color: #2F3941;
+      background-color: #ffffff;
+      background-image: none;
+      border: 1px solid #D8DCDE;
+      border-radius: 4px;
+      box-shadow: none;
+      font-size: 14px;
+      line-height: 18px;
+    }
+
+    .btn.disabled, .btn[disabled] {
+      background-color: #D8DCDE !important;
+      border-color: #D8DCDE !important;
+      color: #fff !important;
+      opacity: 1;
+      box-shadow: none;
+    }
+  }
+
+  .table td {
+    border: 0;
+    padding: 4px;
+  }
+
+  input.stop.btn,
+  .spinner,
+  .results table {
+    display: none;
+  }
+
+  .results {
+    th {
+      cursor: pointer;
+
+      &.sorted {
+        &.ascending:after {
+          content: "\25bc";
+          padding-left: 2px;
+          font-size: 6px;
+        }
+
+        &:not(.ascending):after {
+          @extend th.sorted.ascending:after;
+          content: "\25b2";
+        }
+      }
+    }
+
+    td {
+      &:nth-child(2),
+      &:nth-child(3),
+      &:nth-child(4) {
+        min-width: 80px;
+      }
+    }
+    span.delim {
+      margin: 0 5px;
+      color: #bbb;
+    }
+
+    a.edit-this {
+      color: green;
+      font-weight: bold;
+    }
+  }
+}

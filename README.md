@@ -20,19 +20,52 @@ A Zendesk navbar app which allows you to search:
 * Created date
 * Updated date
 
-## Installation
+## Development
 
-1. [Install Zendesk App Tools](https://support.zendesk.com/hc/en-us/articles/203691236), if you don't have them already.
-2. `git clone https://github.com/jpalmieri/best-search`
-3. `cd best-search`
-4. `zat package`
-5. Upload and install the created `.zip` file in `tmp/` as a private app in your Zendesk
+### Dependencies
+- [Node.js](https://nodejs.org/en/) >= 6.3.x
+- [Ruby](https://www.ruby-lang.org/) >= 2.0.x
+- [Yarn](https://yarnpkg.com/en/)
 
-### Helpful docs
+### Setup
+1. Clone or fork this repo
+2. Change (`cd`) into the `zendesk_best_search` directory
+3. Run `yarn install`
 
-[Zendesk App Tools documentation](https://developer.zendesk.com/apps/docs/agent/tools)
+To run your app locally in Zendesk, you need the [Zendesk Apps Tools (ZAT)](https://github.com/zendesk/zendesk_apps_tools).
 
-[Uploading and installing a Zendesk app](https://support.zendesk.com/hc/en-us/articles/203691296--ZAF-v1-Building-your-first-Zendesk-app-Part-5-Installing-the-app-in-your-Zendesk)
+You'll also need to run a couple of command-line Node.js-based tools that are installed using `npm`. For a node module to be available from the command-line, it must be installed globally.
+
+To setup these and other dependencies, run these commands:
+
+```
+gem install zendesk_apps_tools
+npm install --global webpack karma-cli
+```
+
+### Development Commands
+
+```
+yarn run dev
+```
+
+This command will watch your files for changes (using webpack), and serve the app to your localhost (with ZAT). You can open up your Zendesk instance in your browser and add the param `?zat=true`, then check the dialog to "Load unsafe scripts" (in your browser, probably in the address bar). You should be able to view your app after these steps.
+
+```
+yarn run validate
+```
+
+After making changes, you can build the app and have ZAT tools validate the app with the above command.
+
+```
+yarn run package
+```
+
+If you are satisfied with your changes, you can use the above command to build the app and zip it up. You can then upload the zipped file to your Zendesk instance.
+
+### More info
+
+This app is adapted from the Zendesk Apps Scaffold project, so you may want to take a peek at [their docs](/doc/README.md) to learn more.
 
 ## Contributing
 

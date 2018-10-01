@@ -8,7 +8,7 @@
   {{/unless}}
 </label>
 <div class='new-item-link'>
-    <a href='{{newItemPath}}' target='_blank'>
+    <a href="//{{subdomain}}.zendesk.com/{{newItemPath}}" target='_blank'>
       {{#if searchFormType.dynamicContent}}
         Create new dynamic content item
       {{/if}}
