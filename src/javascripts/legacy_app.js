@@ -82,18 +82,17 @@ const App = (function() {
       this.getSubdomain(this.zafClient, function(subdomain) {
         var searchFormHtml = this.renderSearchForm(searchType, subdomain);
         this.$("#form-elements").html(searchFormHtml);
+        // Add jQuery datepicker to date fields
+        this.$(".query.date").datepicker({
+          dateFormat: "yy-mm-dd"
+        });
+
+        // UI: Make current tab highlighted (and only current tab)
+        $selectedOption
+          .addClass("active")
+          .siblings()
+          .removeClass("active");
       }.bind(this));
-
-      // Add jQuery datepicker to date fields
-      this.$(".query.date").datepicker({
-        dateFormat: "yy-mm-dd"
-      });
-
-      // UI: Make current tab highlighted (and only current tab)
-      $selectedOption
-        .addClass("active")
-        .siblings()
-        .removeClass("active");
     },
     renderSearchForm: function(searchType, subdomain) {
       var searchFields = this.renderTemplate("search-form-" + searchType, {
