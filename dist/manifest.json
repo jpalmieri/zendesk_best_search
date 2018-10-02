@@ -1,0 +1,21 @@
+{
+  "name": "Best Search",
+  "author": {
+    "name": "Joe Palmieri",
+    "email": "jpalmieri@lumoslabs.com",
+    "url": ""
+  },
+  "defaultLocale": "en",
+  "private": true,
+  "location": {
+    "support": {
+      "nav_bar": "assets/index.html"
+    }
+  },
+  "version": "0.1.4",
+  "frameworkVersion": "2.0",
+  "migrator": {
+    "migratedAt": "Tue Sep 25 2018",
+    "version": "0.3.3"
+  }
+}
