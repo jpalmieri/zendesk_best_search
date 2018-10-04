@@ -1,8 +1,10 @@
 language: node_js
 node_js:
-  - "6.3.0"
+  - "9.3.0"
 cache: yarn
-branches:
-  only: [master]
-script: karma start --single-run
+before_script:
+  - gem install zendesk_apps_tools
+script:
+  - yarn run validate
+  - yarn run package
 dist: trusty
