@@ -339,7 +339,9 @@ const App = (function() {
       body: function(items) {
         var query = this.getStringQuery("body");
         return _.filter(items, function(item) {
-          return item.body.match(query);
+          if (item.body) {
+            return item.body.match(query);
+          }
         });
       },
       name: function(dcItems) {
